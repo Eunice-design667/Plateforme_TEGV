@@ -1,0 +1,5 @@
+.DS_Store
+# Documents internes et images sources : hors du dépôt public
+*.docx
+_facebook_images/
+LogoTEGV.jpeg

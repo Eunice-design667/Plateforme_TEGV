@@ -1,0 +1,20 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "framework": null,
+    "buildCommand": "npm run build",
+    "outputDirectory": "public",
+    "functions": {
+        "api/index.php": {
+            "runtime": "vercel-php@0.9.0",
+            "maxDuration": 60,
+            "excludeFiles": "{node_modules/**,tests/**,whatsapp-gateway/**,storage/app/public/**,database/*.sqlite,resources/css/**,resources/js/**,.claude/**}"
+        }
+    },
+    "routes": [
+        { "handle": "filesystem" },
+        { "src": "/(.*)", "dest": "/api/index.php" }
+    ],
+    "crons": [
+        { "path": "/taches/quotidiennes", "schedule": "0 10 * * *" }
+    ]
+}

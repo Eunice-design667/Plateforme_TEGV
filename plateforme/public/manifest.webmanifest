@@ -1,0 +1,15 @@
+{
+    "name": "TEGV · Temple Évangélique Grâce et Victoire",
+    "short_name": "TEGV",
+    "description": "Annuaire des membres, absences, signalements et informations du TEGV.",
+    "lang": "fr",
+    "start_url": "/accueil",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#faf6ee",
+    "theme_color": "#1f2a63",
+    "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+        { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    ]
+}

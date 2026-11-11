@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#1f2a63">
+    <title>Hors connexion · TEGV</title>
+    <style>
+        body { margin: 0; min-height: 100dvh; display: flex; align-items: center; justify-content: center; background: #faf6ee; color: #1a1c2e; font: 15px/1.5 Montserrat, system-ui, sans-serif; text-align: center; padding: 24px; box-sizing: border-box; }
+        img { width: 80px; height: 80px; border-radius: 50%; box-shadow: 0 0 0 1px #efe7d7; }
+        h1 { font-family: 'Bodoni Moda', Georgia, serif; font-weight: 600; color: #151c45; font-size: 28px; margin: 20px 0 8px; }
+        p { color: #6c6e82; max-width: 22rem; margin: 0 auto; }
+        button { margin-top: 24px; min-height: 44px; padding: 12px 24px; border: 0; border-radius: 999px; background: #25327a; color: #fff; font: 600 14px Montserrat, system-ui, sans-serif; }
+    </style>
+</head>
+<body>
+    <main>
+        <img src="/images/logo-rond.png" alt="Logo du TEGV">
+        <h1>Pas de connexion</h1>
+        <p>Votre téléphone n’est pas connecté à Internet. Ce que vous avez commencé à écrire est gardé sur ce téléphone : vous le retrouverez en revenant sur la page.</p>
+        <button type="button" onclick="location.reload()">Réessayer</button>
+    </main>
+    <script>window.addEventListener('online', () => location.reload());</script>
+</body>
+</html>

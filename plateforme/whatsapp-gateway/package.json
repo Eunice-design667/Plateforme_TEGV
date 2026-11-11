@@ -1,0 +1,16 @@
+{
+  "name": "tegv-whatsapp-gateway",
+  "private": true,
+  "type": "module",
+  "description": "Passerelle WhatsApp gratuite du TEGV : relie le numéro dédié de l'église à la plateforme Laravel.",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.24",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
