@@ -74,6 +74,7 @@
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
         ],
         "vercel": [
+            "@php -r \"foreach (glob('vendor/aws/aws-sdk-php/src/data/*', GLOB_ONLYDIR) as \\$dir) { if (! in_array(basename(\\$dir), ['s3', 'sts'], true)) { exec('rm -rf '.escapeshellarg(\\$dir)); } }\"",
             "@php artisan tegv:deploy --no-interaction"
         ]
     },
