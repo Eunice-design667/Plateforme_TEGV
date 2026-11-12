@@ -28,3 +28,5 @@ Thumbs.db
 /whatsapp-gateway/node_modules
 /whatsapp-gateway/session
 .env.vercel
+.vercel
+.env*
