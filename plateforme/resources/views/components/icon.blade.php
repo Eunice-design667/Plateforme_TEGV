@@ -17,6 +17,7 @@
         'briefcase' => '<rect x="2.5" y="7" width="19" height="13.5" rx="2.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2.5 13h19"/>',
         'logout' => '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
         'arrow-right' => '<path d="M5 12h14M13 5l7 7-7 7"/>',
+        'chevron-down' => '<path d="m6 9 6 6 6-6"/>',
         'arrow-left' => '<path d="M19 12H5M11 19l-7-7 7-7"/>',
         'check' => '<path d="m5 12 5 5L20 7"/>',
         'x' => '<path d="M18 6 6 18M6 6l12 12"/>',

@@ -2,6 +2,7 @@ import Alpine from 'alpinejs';
 import fanCarousel from './fan';
 import setupNavigation from './navigation';
 import setupOfflineSupport from './offline';
+import setupPasswordToggles from './password-toggle';
 import setupImageResizing from './resize-images';
 import storyViewer from './stories';
 
@@ -12,6 +13,7 @@ Alpine.start();
 
 setupNavigation();
 setupOfflineSupport();
+setupPasswordToggles();
 setupImageResizing();
 
 if ('serviceWorker' in navigator) {

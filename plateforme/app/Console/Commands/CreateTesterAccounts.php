@@ -53,6 +53,7 @@ class CreateTesterAccounts extends Command
                 'first_name' => $profile['first_name'],
                 'last_name' => $profile['last_name'],
                 'primary_profile' => $profile['trade'],
+                'sector' => config('tegv.trade_sectors')[$profile['trade']] ?? 'autre',
                 'secondary_profiles' => [],
                 'years_experience' => 5,
                 'company' => 'Compte de test',

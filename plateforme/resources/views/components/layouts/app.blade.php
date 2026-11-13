@@ -29,7 +29,7 @@
 <head>
     <x-layouts.head :title="$title" />
 </head>
-<body class="min-h-dvh" @if (session('ephemeral')) data-ephemeral @endif data-home-url="{{ route('home') }}" @if (collect($errors->getBags())->contains(fn ($bag) => $bag->any())) data-has-errors @endif>
+<body class="min-h-dvh" @if (session('ephemeral')) data-ephemeral @endif data-home-url="{{ route('home') }}" @if (isset($errors) && collect($errors->getBags())->contains(fn ($bag) => $bag->any())) data-has-errors @endif>
     <div class="lg:flex">
         {{-- Barre latérale (ordinateur) --}}
         <aside class="sticky top-0 hidden h-dvh w-72 shrink-0 flex-col border-r border-sand bg-white/70 px-5 py-6 backdrop-blur lg:flex">
@@ -100,7 +100,7 @@
                 <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false" @click.outside="open = false">
                     <button type="button" class="flex min-h-11 items-center gap-1 rounded-full" @click="open = ! open" :aria-expanded="open" aria-label="Menu du compte">
                         <x-avatar :member="$user" size="sm" />
-                        <x-icon name="arrow-right" class="size-3.5 rotate-90 text-muted" />
+                        <x-icon name="chevron-down" class="size-4 text-muted transition" ::class="open && 'rotate-180'" />
                     </button>
                     <div x-show="open" x-cloak x-transition.origin.top.right class="absolute top-12 right-0 z-50 w-64 overflow-hidden rounded-3xl bg-white p-2 shadow-(--shadow-card) ring-1 ring-sand">
                         <p class="truncate px-3 pt-2 pb-1 text-sm font-bold text-navy-900">{{ $user->full_name }}</p>

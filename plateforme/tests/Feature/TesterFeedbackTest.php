@@ -24,7 +24,7 @@ class TesterFeedbackTest extends TestCase
         $member = User::factory()->create();
 
         $this->actingAs($member)->put(route('profile.update'), [
-            'first_name' => 'Awa', 'last_name' => 'Ilboudo', 'primary_profile' => 'Droit', 'whatsapp' => '70 26 83 95',
+            'first_name' => 'Awa', 'last_name' => 'Ilboudo', 'primary_profile' => 'Droit', 'sector' => 'autre', 'whatsapp' => '70 26 83 95',
             'photo' => UploadedFile::fake()->image('grande.jpg')->size(10 * 1024),
         ])->assertSessionHasErrors('photo');
 

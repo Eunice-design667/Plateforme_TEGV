@@ -37,7 +37,7 @@ class RegistrationTest extends TestCase
         $this->actingAs($user)->put(route('profile.update'), [
             'first_name' => 'Awa',
             'last_name' => 'Ilboudo',
-            'primary_profile' => 'Comptabilité',
+            'primary_profile' => 'Comptabilité', 'sector' => 'autre',
             'secondary_profiles' => ['Fiscalité', 'Audit'],
             'years_experience' => 12,
             'birth_day' => 14,
@@ -62,7 +62,7 @@ class RegistrationTest extends TestCase
         $this->actingAs($user)->put(route('profile.update'), [
             'first_name' => 'Daniel',
             'last_name' => 'Nikiéma',
-            'primary_profile' => 'Enseignement',
+            'primary_profile' => 'Enseignement', 'sector' => 'autre',
             'church_roles' => ['pasteur'],
             'whatsapp' => '70 00 00 00',
         ])->assertRedirect();
@@ -77,7 +77,7 @@ class RegistrationTest extends TestCase
         $user = User::factory()->withoutProfile()->create();
 
         $this->actingAs($user)->put(route('profile.update'), [
-            'first_name' => 'Awa', 'last_name' => 'Ilboudo', 'primary_profile' => 'Droit',
+            'first_name' => 'Awa', 'last_name' => 'Ilboudo', 'primary_profile' => 'Droit', 'sector' => 'autre',
             'whatsapp' => '70 00 00 00', 'birth_day' => 31, 'birth_month' => 4,
         ])->assertSessionHasErrors('birth_day');
     }

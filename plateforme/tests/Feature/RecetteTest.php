@@ -34,7 +34,7 @@ class RecetteTest extends TestCase
     private function profile(array $overrides = []): array
     {
         return [
-            'first_name' => 'Awa', 'last_name' => 'Ilboudo', 'primary_profile' => 'Comptabilité',
+            'first_name' => 'Awa', 'last_name' => 'Ilboudo', 'primary_profile' => 'Comptabilité', 'sector' => 'autre',
             'whatsapp' => '70 26 83 95', ...$overrides,
         ];
     }
@@ -143,7 +143,7 @@ class RecetteTest extends TestCase
         $member = User::factory()->create();
 
         $this->actingAs($member)->put(route('profile.update'), $this->profile([
-            'primary_profile' => 'Plomberie', 'secondary_profiles' => ['Soudure', 'Peinture'],
+            'primary_profile' => 'Plomberie', 'sector' => 'autre', 'secondary_profiles' => ['Soudure', 'Peinture'],
             'company' => 'ONEA', 'job_title' => 'Chef d’équipe', 'years_experience' => 12, 'contact_email' => 'awa@example.com',
         ]));
 
@@ -168,10 +168,10 @@ class RecetteTest extends TestCase
     public function test_f1_12_search_by_trade_company_skill_role_and_name(): void
     {
         $awa = User::factory()->create([
-            'first_name' => 'Awa', 'last_name' => 'Ilboudo', 'primary_profile' => 'Comptabilité', 'company' => 'Coris Bank',
+            'first_name' => 'Awa', 'last_name' => 'Ilboudo', 'primary_profile' => 'Comptabilité', 'sector' => 'autre', 'company' => 'Coris Bank',
             'secondary_profiles' => ['Fiscalité'], 'church_roles' => ['chorale'],
         ]);
-        User::factory()->create(['first_name' => 'Issa', 'last_name' => 'Zongo', 'primary_profile' => 'Maçonnerie', 'company' => 'Indépendant', 'secondary_profiles' => [], 'church_roles' => [], 'job_title' => 'Gérant']);
+        User::factory()->create(['first_name' => 'Issa', 'last_name' => 'Zongo', 'primary_profile' => 'Maçonnerie', 'sector' => 'autre', 'company' => 'Indépendant', 'secondary_profiles' => [], 'church_roles' => [], 'job_title' => 'Gérant']);
 
         foreach (['comptabilite', 'Coris', 'fiscalité', 'chorale', 'ilboudo'] as $term) {
             $this->actingAs($awa)->get(route('directory', ['q' => $term]))->assertSee('Awa Ilboudo')->assertDontSee('Issa Zongo');
@@ -181,7 +181,7 @@ class RecetteTest extends TestCase
     public function test_f1_14_ranking_by_experience(): void
     {
         foreach ([2, 15, 8] as $years) {
-            User::factory()->create(['first_name' => "Exp{$years}", 'last_name' => 'Test', 'primary_profile' => 'Menuiserie', 'years_experience' => $years]);
+            User::factory()->create(['first_name' => "Exp{$years}", 'last_name' => 'Test', 'primary_profile' => 'Menuiserie', 'sector' => 'autre', 'years_experience' => $years]);
         }
 
         $this->actingAs(User::factory()->create())->get(route('directory', ['q' => 'menuiserie']))

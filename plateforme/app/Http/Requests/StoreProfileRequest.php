@@ -46,6 +46,9 @@ class StoreProfileRequest extends FormRequest
             'first_name' => ['required', 'string', 'max:80'],
             'last_name' => ['required', 'string', 'max:80'],
             'primary_profile' => ['required', 'string', 'max:100'],
+            'sector' => ['required', Rule::in(array_keys(config('tegv.sectors')))],
+            'cover_style' => ['nullable', Rule::in([...array_keys(config('tegv.covers')), 'photo'])],
+            'cover' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:6144'],
             'secondary_profiles' => ['array', 'max:5'],
             'secondary_profiles.*' => ['string', 'max:100'],
             'years_experience' => ['nullable', 'integer', 'min:0', 'max:70'],
@@ -70,6 +73,7 @@ class StoreProfileRequest extends FormRequest
     {
         return [
             'other_roles.required' => 'Vous avez choisi « Autre » : écrivez au moins un rôle puis touchez « Ajouter ».',
+            'sector.required' => 'Choisissez votre secteur d’activité dans la liste.',
         ];
     }
 

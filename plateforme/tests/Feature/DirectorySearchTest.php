@@ -14,9 +14,9 @@ class DirectorySearchTest extends TestCase
 
     public function test_results_are_ranked_by_experience_and_ignore_accents(): void
     {
-        $junior = User::factory()->create(['primary_profile' => 'Électricité', 'years_experience' => 3]);
-        $senior = User::factory()->create(['primary_profile' => 'Électricité', 'years_experience' => 20]);
-        User::factory()->create(['primary_profile' => 'Couture', 'secondary_profiles' => [], 'company' => null, 'job_title' => null]);
+        $junior = User::factory()->create(['primary_profile' => 'Électricité', 'sector' => 'autre', 'years_experience' => 3]);
+        $senior = User::factory()->create(['primary_profile' => 'Électricité', 'sector' => 'autre', 'years_experience' => 20]);
+        User::factory()->create(['primary_profile' => 'Couture', 'sector' => 'autre', 'secondary_profiles' => [], 'company' => null, 'job_title' => null]);
 
         $results = app(DirectorySearch::class)->search('electricite');
 
@@ -25,8 +25,8 @@ class DirectorySearchTest extends TestCase
 
     public function test_main_profile_beats_secondary_profile_at_equal_experience(): void
     {
-        $secondary = User::factory()->create(['primary_profile' => 'Vente', 'secondary_profiles' => ['Plomberie'], 'years_experience' => 5]);
-        $main = User::factory()->create(['primary_profile' => 'Plomberie', 'years_experience' => 5]);
+        $secondary = User::factory()->create(['primary_profile' => 'Vente', 'sector' => 'autre', 'secondary_profiles' => ['Plomberie'], 'years_experience' => 5]);
+        $main = User::factory()->create(['primary_profile' => 'Plomberie', 'sector' => 'autre', 'years_experience' => 5]);
 
         $results = app(DirectorySearch::class)->search('plomberie');
 

@@ -65,8 +65,44 @@
                 </div>
             </section>
 
+            <section class="card grid grid-cols-1 gap-4 p-5 sm:p-6"
+                     x-data="{ style: @js(old('cover_style', $member->cover_path ? 'photo' : ($member->cover_style ?? 'neutre'))), coverPreview: @js($member->cover_path ? $member->coverBackground() : null) }">
+                <h2 class="flex items-center gap-2 font-bold text-navy-900"><x-icon name="sparkles" class="text-gold-600" /> Ma couverture</h2>
+                <p class="-mt-2 text-sm text-muted">Le bandeau en haut de votre fiche. Neutre par défaut : choisissez une couleur ou votre propre image.</p>
+                <div class="grid grid-cols-4 gap-2 sm:grid-cols-5">
+                    @foreach (config('tegv.covers') as $key => $cover)
+                        <label class="cursor-pointer">
+                            <input type="radio" name="cover_style" value="{{ $key }}" x-model="style" class="peer sr-only">
+                            <span class="block h-14 rounded-2xl ring-1 ring-sand peer-checked:ring-4 peer-checked:ring-navy-600 peer-focus-visible:outline-2 peer-focus-visible:outline-gold-400" style="background: {{ $cover['css'] }}"></span>
+                            <span class="mt-1 block text-center text-[11px] font-semibold text-muted">{{ $cover['label'] }}</span>
+                        </label>
+                    @endforeach
+                    <label class="cursor-pointer">
+                        <input type="radio" name="cover_style" value="photo" x-model="style" class="peer sr-only">
+                        <span class="relative flex h-14 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-gold-300 bg-gold-50 text-gold-600 peer-checked:ring-4 peer-checked:ring-navy-600" :style="coverPreview ? `background: ${coverPreview}` : ''">
+                            <x-icon name="camera" x-show="! coverPreview" />
+                        </span>
+                        <span class="mt-1 block text-center text-[11px] font-semibold text-muted">Mon image</span>
+                    </label>
+                </div>
+                <div x-show="style === 'photo'" x-cloak>
+                    <x-field label="Image de couverture" name="cover" hint="Format paysage conseillé. JPG, PNG ou WebP, 6 Mo maximum.">
+                        <input id="cover" name="cover" type="file" accept="image/jpeg,image/png,image/webp" data-max-mb="6" class="input py-2.5"
+                               @change="const f = $event.target.files[0]; if (f && f.size <= 6 * 1024 * 1024) coverPreview = `center / cover no-repeat url(${URL.createObjectURL(f)})`">
+                    </x-field>
+                </div>
+            </section>
+
             <section class="card grid grid-cols-1 gap-5 p-5 sm:p-6">
                 <h2 class="flex items-center gap-2 font-bold text-navy-900"><x-icon name="briefcase" class="text-gold-600" /> Mon métier</h2>
+                <x-field label="Secteur d’activité" name="sector" hint="Le grand domaine dans lequel vous travaillez : il sert de filtre dans l’annuaire.">
+                    <select id="sector" name="sector" required class="input">
+                        <option value="">Choisir dans la liste…</option>
+                        @foreach (config('tegv.sectors') as $key => $label)
+                            <option value="{{ $key }}" @selected(old('sector', $member->sector) === $key)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </x-field>
                 <x-field label="Profil principal" name="primary_profile" hint="Choisissez dans la liste ou écrivez votre métier s’il n’y est pas.">
                     <input id="primary_profile" name="primary_profile" list="trades" value="{{ old('primary_profile', $member->primary_profile) }}" required class="input" placeholder="Ex. : Plomberie" autocomplete="off">
                     <datalist id="trades">

@@ -18,13 +18,14 @@ class DirectorySearch
      *
      * @return Collection<int, User>
      */
-    public function search(?string $term, ?ChurchRole $role = null): Collection
+    public function search(?string $term, ?ChurchRole $role = null, ?string $sector = null): Collection
     {
         $needle = Str::of((string) $term)->lower()->ascii()->trim()->toString();
 
         return User::query()
             ->withCompletedProfile()
             ->when($role !== null, fn ($query) => $query->whereJsonContains('church_roles', $role->value))
+            ->when($sector !== null, fn ($query) => $query->where('sector', $sector))
             ->get()
             ->map(function (User $member) use ($needle): ?array {
                 $score = $needle === '' ? 0 : $this->relevance($member, $needle);
@@ -69,6 +70,10 @@ class DirectorySearch
 
         if (collect($member->roleLabels())->contains(fn (string $label) => $matches($label))) {
             $score += 10;
+        }
+
+        if ($matches($member->sectorLabel())) {
+            $score += 8;
         }
 
         if ($matches($member->full_name)) {

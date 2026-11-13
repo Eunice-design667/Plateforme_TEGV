@@ -13,11 +13,13 @@ class DirectoryController extends Controller
     {
         $role = ChurchRole::tryFrom((string) $request->query('role'));
         $term = $request->string('q')->limit(80, '')->toString();
+        $sector = array_key_exists((string) $request->query('secteur'), config('tegv.sectors')) ? (string) $request->query('secteur') : null;
 
         return view('directory', [
-            'members' => $search->search($term, $role),
+            'members' => $search->search($term, $role, $sector),
             'term' => $term,
             'activeRole' => $role,
+            'activeSector' => $sector,
         ]);
     }
 }

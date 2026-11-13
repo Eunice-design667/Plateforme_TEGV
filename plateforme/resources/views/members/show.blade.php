@@ -10,10 +10,7 @@
 
     <div class="mt-4 grid grid-cols-1 gap-5 lg:grid-cols-[22rem_1fr]">
         <section class="card overflow-hidden">
-            <div class="relative h-28 bg-navy-800">
-                <img src="/images/eglise/culte.jpg" alt="" class="size-full object-cover opacity-30">
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-navy-900/60"></div>
-            </div>
+            <div class="h-28" style="background: {{ $member->coverBackground() }}" role="img" aria-label="Couverture du profil"></div>
             <div class="relative -mt-14 flex flex-col items-center px-5 pb-6 text-center">
                 <x-avatar :member="$member" size="xl" class="ring-4" />
                 <h1 class="mt-3 text-2xl font-serif font-semibold tracking-tight text-navy-900">{{ $member->full_name }}</h1>
@@ -58,6 +55,10 @@
 
             <section class="card p-5">
                 <h2 class="flex items-center gap-2 font-bold text-navy-900"><x-icon name="briefcase" class="text-gold-600" /> Compétences</h2>
+                @if ($member->sectorLabel())
+                    <p class="mt-4 text-xs font-semibold text-muted uppercase">Secteur d’activité</p>
+                    <p class="mt-1 font-semibold text-navy-900">{{ $member->sectorLabel() }}</p>
+                @endif
                 <p class="mt-4 text-xs font-semibold text-muted uppercase">Profil principal</p>
                 <p class="mt-1"><span class="chip bg-gold-100 px-4 py-2 text-sm text-gold-600">{{ $member->primary_profile }}</span></p>
                 @if ($member->secondary_profiles)

@@ -49,6 +49,64 @@ return [
     ],
 
     /*
+     * Sectors of activity, after the NAEMA classification (AFRISTAT) used by the INSD,
+     * itself aligned with the UN's ISIC sections, in plain words.
+     */
+    'sectors' => [
+        'agriculture' => 'Agriculture, élevage, pêche',
+        'mines' => 'Mines et carrières',
+        'industrie' => 'Industrie, artisanat de production',
+        'energie' => 'Énergie (électricité, gaz, solaire)',
+        'eau' => 'Eau, assainissement, déchets',
+        'btp' => 'Bâtiment et travaux publics',
+        'commerce' => 'Commerce, réparation de véhicules',
+        'transport' => 'Transport et logistique',
+        'hotellerie' => 'Hôtellerie et restauration',
+        'numerique' => 'Informatique, télécoms, médias',
+        'finance' => 'Banque, finance, assurance',
+        'immobilier' => 'Immobilier',
+        'conseil' => 'Droit, comptabilité, conseil, ingénierie',
+        'services_entreprises' => 'Services aux entreprises (sécurité, nettoyage, intérim)',
+        'administration' => 'Administration publique, défense',
+        'enseignement' => 'Enseignement, formation',
+        'sante' => 'Santé et action sociale',
+        'culture' => 'Arts, culture, sport, loisirs',
+        'services_personnes' => 'Services aux personnes (couture, coiffure, beauté…)',
+        'ong' => 'ONG, associations, organisations religieuses',
+        'etudiant' => 'Étudiant(e), élève',
+        'retraite' => 'Retraité(e)',
+        'autre' => 'Autre',
+    ],
+
+    /*
+     * Usual sector of the suggested trades (used to fill the sector of existing profiles).
+     */
+    'trade_sectors' => [
+        'Agriculture' => 'agriculture', 'Élevage' => 'agriculture', 'Architecture' => 'conseil', 'Banque et finance' => 'finance',
+        'Coiffure' => 'services_personnes', 'Commerce' => 'commerce', 'Communication' => 'numerique', 'Comptabilité' => 'conseil',
+        'Couture' => 'services_personnes', 'Droit' => 'conseil', 'Électricité' => 'energie', 'Énergie solaire' => 'energie',
+        'Enseignement' => 'enseignement', 'Froid et climatisation' => 'btp', 'Génie civil' => 'btp', 'Informatique' => 'numerique',
+        'Maçonnerie' => 'btp', 'Mécanique auto' => 'commerce', 'Médecine' => 'sante', 'Menuiserie' => 'industrie',
+        'Peinture' => 'btp', 'Pharmacie' => 'sante', 'Photographie' => 'culture', 'Plomberie' => 'btp',
+        'Ressources humaines' => 'services_entreprises', 'Restauration' => 'hotellerie', 'Sécurité' => 'services_entreprises',
+        'Soins infirmiers' => 'sante', 'Soudure' => 'industrie', 'Transport' => 'transport', 'Accompagnement pastoral' => 'ong',
+    ],
+
+    /*
+     * Profile covers: neutral by default, or chosen by the member (or their own picture).
+     */
+    'covers' => [
+        'neutre' => ['label' => 'Neutre', 'css' => 'linear-gradient(135deg, #efe7d7 0%, #faf6ee 100%)'],
+        'nuit' => ['label' => 'Bleu nuit', 'css' => 'linear-gradient(135deg, #151c45 0%, #2e3c91 100%)'],
+        'or' => ['label' => 'Or', 'css' => 'linear-gradient(135deg, #e9ac00 0%, #f8d35a 100%)'],
+        'bordeaux' => ['label' => 'Bordeaux', 'css' => 'linear-gradient(135deg, #7a1410 0%, #c41c14 100%)'],
+        'ciel' => ['label' => 'Ciel', 'css' => 'linear-gradient(135deg, #b9c1e8 0%, #eef0fa 100%)'],
+        'savane' => ['label' => 'Savane', 'css' => 'linear-gradient(135deg, #8a5a2b 0%, #e2b77a 100%)'],
+        'foret' => ['label' => 'Forêt', 'css' => 'linear-gradient(135deg, #1f4d3a 0%, #4f8a6b 100%)'],
+        'aube' => ['label' => 'Aube', 'css' => 'linear-gradient(135deg, #f5c22a 0%, #e2231a 55%, #25327a 100%)'],
+    ],
+
+    /*
      * Weekly programme shown on the home screen.
      */
     'programme' => [

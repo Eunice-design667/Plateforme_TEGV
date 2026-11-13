@@ -36,7 +36,7 @@ const storage = {
 
 function savableFields(form) {
     return [...form.elements].filter(
-        (field) => field.name && !field.name.endsWith('[]') && !SKIPPED_TYPES.includes(field.type) && field.name !== 'website',
+        (field) => field.name && !field.name.endsWith('[]') && !SKIPPED_TYPES.includes(field.type) && field.name !== 'website' && !field.dataset.passwordToggle,
     );
 }
 

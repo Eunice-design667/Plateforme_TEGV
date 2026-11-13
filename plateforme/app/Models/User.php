@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Storage;
 
 #[Fillable([
     'name', 'email', 'password',
-    'first_name', 'last_name', 'primary_profile', 'secondary_profiles', 'years_experience',
+    'first_name', 'last_name', 'primary_profile', 'sector', 'cover_style', 'secondary_profiles', 'years_experience',
     'company', 'job_title', 'birth_day', 'birth_month', 'church_roles', 'other_roles',
     'whatsapp', 'contact_email', 'is_tegv_christian',
 ])]
@@ -203,6 +203,28 @@ class User extends Authenticatable
     protected function photoUrl(): Attribute
     {
         return Attribute::get(fn () => $this->photo_path ? Storage::disk('media')->url($this->photo_path) : null);
+    }
+
+    public function sectorLabel(): ?string
+    {
+        return config('tegv.sectors')[$this->sector] ?? null;
+    }
+
+    /**
+     * CSS background of the profile cover: the member's own picture, a chosen style,
+     * or the neutral style by default.
+     */
+    public function coverBackground(): string
+    {
+        if ($this->cover_path) {
+            $url = Storage::disk('media')->url($this->cover_path);
+
+            return "center / cover no-repeat url('{$url}')";
+        }
+
+        $covers = config('tegv.covers');
+
+        return ($covers[$this->cover_style] ?? $covers['neutre'])['css'];
     }
 
     /**

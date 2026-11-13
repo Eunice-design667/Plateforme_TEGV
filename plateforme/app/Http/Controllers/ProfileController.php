@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\LeaderStatus;
 use App\Http\Requests\StoreProfileRequest;
 use App\Models\User;
+use App\Support\ImageResizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -34,7 +35,7 @@ class ProfileController extends Controller
         $member = $request->user();
         $isCreation = ! $member->hasCompletedProfile();
 
-        $member->fill($request->safe()->except('photo'));
+        $member->fill($request->safe()->except(['photo', 'cover', 'cover_style']));
         $member->name = trim("{$member->first_name} {$member->last_name}");
 
         if ($request->hasFile('photo')) {
@@ -45,6 +46,7 @@ class ProfileController extends Controller
             $member->photo_path = $request->file('photo')->store('photos', 'media');
         }
 
+        $this->syncCover($member, $request);
         $this->syncLeaderStatus($member);
         $member->profile_completed_at ??= now();
         $member->save();
@@ -52,6 +54,35 @@ class ProfileController extends Controller
         return redirect()
             ->route($isCreation ? 'home' : 'members.show', $isCreation ? [] : $member)
             ->with('status', $isCreation ? 'Bienvenue ! Votre profil est créé.' : 'Votre profil est à jour.');
+    }
+
+    /**
+     * The cover is either the member's own picture or one of the preset styles.
+     */
+    private function syncCover(User $member, StoreProfileRequest $request): void
+    {
+        $style = $request->validated('cover_style');
+
+        if ($request->hasFile('cover')) {
+            $style = 'photo';
+        }
+
+        if ($style === null) {
+            return;
+        }
+
+        if ($style !== 'photo' || $request->hasFile('cover')) {
+            if ($member->cover_path) {
+                Storage::disk('media')->delete($member->cover_path);
+                $member->cover_path = null;
+            }
+        }
+
+        if ($request->hasFile('cover')) {
+            $member->cover_path = ImageResizer::storeJpeg($request->file('cover'), 'couvertures');
+        }
+
+        $member->cover_style = $style === 'photo' && ! $member->cover_path ? 'neutre' : $style;
     }
 
     /**

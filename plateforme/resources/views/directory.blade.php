@@ -7,21 +7,36 @@
         <p class="mt-1 text-sm text-muted">Cherchez un métier, une entreprise, une compétence ou un rôle.</p>
     </div>
 
-    <form method="GET" action="{{ route('directory') }}" class="mt-5">
+    <form method="GET" action="{{ route('directory') }}" class="mt-5 grid grid-cols-1 gap-3">
         @if ($activeRole)<input type="hidden" name="role" value="{{ $activeRole->value }}">@endif
-        <label for="q" class="sr-only">Rechercher</label>
+        <label for="q" class="sr-only">Rechercher un métier, une entreprise, un nom</label>
         <div class="relative">
             <x-icon name="search" class="pointer-events-none absolute top-1/2 left-5 -translate-y-1/2 text-muted" />
-            <input id="q" name="q" type="search" value="{{ $term }}" placeholder="Électricien, comptable, chorale…" class="input rounded-full bg-white py-4 pr-28 pl-13 shadow-(--shadow-card)">
+            <input id="q" name="q" type="search" list="trades" value="{{ $term }}" placeholder="Métier, entreprise, nom…" autocomplete="off" class="input rounded-full bg-white py-4 pr-28 pl-13 shadow-(--shadow-card)">
             <button class="btn-primary absolute top-1/2 right-2 -translate-y-1/2 px-5 py-2.5">Chercher</button>
+            <datalist id="trades">
+                @foreach (config('tegv.trades') as $trade)
+                    <option value="{{ $trade }}"></option>
+                @endforeach
+            </datalist>
+        </div>
+        <label for="secteur" class="sr-only">Secteur d’activité</label>
+        <div class="relative">
+            <x-icon name="briefcase" class="pointer-events-none absolute top-1/2 left-5 -translate-y-1/2 text-muted" />
+            <select id="secteur" name="secteur" onchange="this.form.requestSubmit()" @class(['input rounded-full py-3.5 pl-13 shadow-(--shadow-card)', 'bg-white' => ! $activeSector, 'bg-navy-50 font-semibold text-navy-900 ring-navy-500' => $activeSector])>
+                <option value="">Tous les secteurs d’activité</option>
+                @foreach (config('tegv.sectors') as $key => $label)
+                    <option value="{{ $key }}" @selected($activeSector === $key)>{{ $label }}</option>
+                @endforeach
+            </select>
         </div>
     </form>
 
     <div class="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
-        <a href="{{ route('directory', array_filter(['q' => $term])) }}" @class(['chip min-h-11 shrink-0 px-4 py-2 text-sm', 'bg-navy-700 text-white' => ! $activeRole, 'bg-white text-navy-800 ring-1 ring-sand' => $activeRole])>Tous</a>
+        <a href="{{ route('directory', array_filter(['q' => $term, 'secteur' => $activeSector])) }}" @class(['chip min-h-11 shrink-0 px-4 py-2 text-sm', 'bg-navy-700 text-white' => ! $activeRole, 'bg-white text-navy-800 ring-1 ring-sand' => $activeRole])>Tous</a>
         @foreach (ChurchRole::cases() as $role)
             @continue($role === ChurchRole::Autre)
-            <a href="{{ route('directory', array_filter(['q' => $term, 'role' => $role->value])) }}" @class([
+            <a href="{{ route('directory', array_filter(['q' => $term, 'secteur' => $activeSector, 'role' => $role->value])) }}" @class([
                 'chip min-h-11 shrink-0 px-4 py-2 text-sm',
                 'bg-navy-700 text-white' => $activeRole === $role,
                 'bg-white text-navy-800 ring-1 ring-sand' => $activeRole !== $role,
@@ -30,7 +45,7 @@
     </div>
 
     <p class="mt-5 text-sm text-muted">
-        {{ $members->count() }} {{ $members->count() > 1 ? 'membres' : 'membre' }}{{ $term !== '' ? " pour « {$term} »" : '' }} · classés par années d’expérience
+        {{ $members->count() }} {{ $members->count() > 1 ? 'membres' : 'membre' }}{{ $term !== '' ? " pour « {$term} »" : '' }}{{ $activeSector ? ' · '.config('tegv.sectors')[$activeSector] : '' }} · classés par années d’expérience
     </p>
 
     @if ($members->isEmpty())

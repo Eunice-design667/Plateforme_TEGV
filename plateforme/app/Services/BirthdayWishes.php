@@ -16,9 +16,16 @@ class BirthdayWishes
 
     public function ensureFor(User $member, CarbonInterface $day): BirthdayMessage
     {
-        return BirthdayMessage::query()->firstOrCreate(
-            ['user_id' => $member->id, 'birthday_on' => $day->toDateString()],
-            ['message' => $this->writer->birthdayWishes($member->first_name)],
-        );
+        // whereDate: SQLite stores the date with a time part, so a plain equality would miss it.
+        $existing = BirthdayMessage::query()
+            ->where('user_id', $member->id)
+            ->whereDate('birthday_on', $day)
+            ->first();
+
+        return $existing ?? BirthdayMessage::create([
+            'user_id' => $member->id,
+            'birthday_on' => $day->toDateString(),
+            'message' => $this->writer->birthdayWishes($member->first_name),
+        ]);
     }
 }
