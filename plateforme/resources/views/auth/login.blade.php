@@ -17,7 +17,7 @@
         <p class="mt-5 rounded-2xl bg-navy-800 px-4 py-3 text-sm text-white" role="status">{{ session('status') }}</p>
     @endif
 
-    <form method="POST" action="{{ route('login') }}" class="card mt-5 grid grid-cols-1 gap-5 p-5 sm:p-6">
+    <form method="POST" action="{{ route('login') }}" data-session-start class="card mt-5 grid grid-cols-1 gap-5 p-5 sm:p-6">
         @csrf
         <x-field label="Email" name="email">
             <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" class="input">
@@ -26,8 +26,9 @@
             <input id="password" name="password" type="password" required autocomplete="current-password" class="input">
         </x-field>
         <a href="{{ route('password.request') }}" class="-mt-3 justify-self-end text-sm font-semibold text-navy-700 underline underline-offset-4">Mot de passe oublié ?</a>
-        <label class="flex items-center gap-2.5 text-sm text-muted">
-            <input type="checkbox" name="remember" value="1" class="size-4 rounded accent-navy-700" checked> Rester connecté sur ce téléphone
+        <label class="flex items-start gap-3 rounded-2xl bg-cream p-3 text-sm text-navy-900 ring-1 ring-sand">
+            <input type="checkbox" name="remember" value="1" @checked(old('remember')) class="mt-0.5 size-5 shrink-0 rounded accent-navy-700">
+            <span><strong>Rester connecté</strong> sur cet appareil<span class="block text-xs text-muted">Sinon, vous serez déconnecté en fermant l’application.</span></span>
         </label>
         <button class="btn-primary w-full py-3.5">Se connecter</button>
     </form>

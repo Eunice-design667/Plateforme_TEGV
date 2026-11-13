@@ -47,6 +47,7 @@ class User extends Authenticatable
             'profile_completed_at' => 'datetime',
             'leader_status' => LeaderStatus::class,
             'leader_requested_at' => 'datetime',
+            'deletion_requested_at' => 'datetime',
             'leader_validated_at' => 'datetime',
             'years_experience' => 'integer',
             'birth_day' => 'integer',
@@ -93,7 +94,8 @@ class User extends Authenticatable
      */
     public function scopeWithCompletedProfile(Builder $query): void
     {
-        $query->whereNotNull('profile_completed_at');
+        // Accounts waiting for deletion are hidden from the directory and the birthdays.
+        $query->whereNotNull('profile_completed_at')->whereNull('deletion_requested_at');
     }
 
     /**
@@ -124,6 +126,19 @@ class User extends Authenticatable
     public function hasCompletedProfile(): bool
     {
         return $this->profile_completed_at !== null;
+    }
+
+    public function isPendingDeletion(): bool
+    {
+        return $this->deletion_requested_at !== null;
+    }
+
+    /**
+     * Day when a requested deletion becomes final.
+     */
+    public function deletionDate(): ?CarbonInterface
+    {
+        return $this->deletion_requested_at?->copy()->addDays(config('tegv.account_deletion_days'));
     }
 
     /**

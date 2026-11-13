@@ -10,7 +10,7 @@
     </div>
     <div class="mt-5 flex gap-2" aria-hidden="true"><span class="h-1.5 flex-1 rounded-full bg-gold-400"></span><span class="h-1.5 flex-1 rounded-full bg-sand"></span></div>
 
-    <form method="POST" action="{{ route('register') }}" data-draft="inscription" class="card mt-6 grid grid-cols-1 gap-5 p-5 sm:p-6">
+    <form method="POST" action="{{ route('register') }}" data-draft="inscription" data-session-start class="card mt-6 grid grid-cols-1 gap-5 p-5 sm:p-6">
         @csrf
         @if ($account)
             <p class="rounded-2xl bg-navy-50 p-3 text-sm text-navy-900"><strong>Votre compte est déjà créé.</strong> Vous pouvez corriger votre email ; laissez le mot de passe vide pour le garder.</p>
@@ -24,6 +24,12 @@
         <x-field label="Confirmer le mot de passe" name="password_confirmation">
             <input id="password_confirmation" name="password_confirmation" type="password" @required(! $account) autocomplete="new-password" class="input">
         </x-field>
+        @unless ($account)
+            <label class="flex items-start gap-3 rounded-2xl bg-cream p-3 text-sm text-navy-900 ring-1 ring-sand">
+                <input type="checkbox" name="remember" value="1" @checked(old('remember')) class="mt-0.5 size-5 shrink-0 rounded accent-navy-700">
+                <span><strong>Rester connecté</strong> sur cet appareil<span class="block text-xs text-muted">Sinon, vous serez déconnecté en fermant l’application.</span></span>
+            </label>
+        @endunless
         <button class="btn-primary w-full py-3.5">Continuer vers mon profil <x-icon name="arrow-right" class="size-4" /></button>
     </form>
 

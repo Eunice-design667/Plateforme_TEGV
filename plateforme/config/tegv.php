@@ -29,6 +29,12 @@ return [
     'demo_seed' => (bool) env('DEMO_SEED', false),
     'demo_password' => env('DEMO_PASSWORD', 'password'),
 
+    /*
+     * A member who asks to delete their account can cancel for this many days,
+     * then the account and its pictures are deleted for good.
+     */
+    'account_deletion_days' => 30,
+
     'default_country_code' => env('TEGV_COUNTRY_CODE', '226'),
 
     /*

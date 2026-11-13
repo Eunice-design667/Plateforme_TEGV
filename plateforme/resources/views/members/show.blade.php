@@ -117,11 +117,12 @@
                 <label class="relative flex size-24 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-gold-300 bg-gold-50 text-gold-600">
                     <template x-if="preview"><img :src="preview" alt="" class="absolute inset-0 size-full object-cover"></template>
                     <span x-show="!preview" class="flex flex-col items-center gap-1 text-[11px] font-bold"><x-icon name="plus" /> Image</span>
-                    <input type="file" name="image" accept="image/jpeg,image/png,image/webp" required class="sr-only"
-                           @change="const f = $event.target.files[0]; if (f) preview = URL.createObjectURL(f)">
+                    <input type="file" name="image" accept="image/jpeg,image/png,image/webp" data-max-mb="6" required class="sr-only"
+                           @change="const f = $event.target.files[0]; if (f && f.size <= 6 * 1024 * 1024) preview = URL.createObjectURL(f)">
                 </label>
                 <x-field label="Légende (facultatif)" name="caption" bag="poster">
                     <input id="caption" name="caption" maxlength="200" value="{{ old('caption') }}" class="input" placeholder="Ex. : Mon atelier de couture est ouvert le samedi">
+                    <p class="mt-1.5 text-xs text-muted">Image JPG, PNG ou WebP, 6 Mo maximum.</p>
                 </x-field>
                 <button class="btn-gold py-3"><x-icon name="plus" class="size-4" /> Publier l’affiche</button>
                 @error('image', 'poster')<p class="text-xs font-semibold text-crimson-600 sm:col-span-3">{{ $message }}</p>@enderror

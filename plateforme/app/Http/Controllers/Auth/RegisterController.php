@@ -61,8 +61,9 @@ class RegisterController extends Controller
             'contact_email' => $validated['email'],
         ]);
 
-        Auth::login($user);
+        Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
+        $request->session()->put('ephemeral', ! $request->boolean('remember'));
 
         return redirect()->route('profile.create');
     }

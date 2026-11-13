@@ -48,11 +48,11 @@
                     </label>
                     <div class="text-sm">
                         <p class="font-bold text-navy-900">Ma photo</p>
-                        <p class="text-muted">JPG, PNG ou WebP, 3 Mo maximum.</p>
+                        <p class="text-muted">JPG, PNG ou WebP, <strong>3 Mo maximum</strong>.</p>
                         @error('photo')<p class="mt-1 text-xs font-semibold text-crimson-600">{{ $message }}</p>@enderror
                     </div>
-                    <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only"
-                           @change="const f = $event.target.files[0]; if (f) preview = URL.createObjectURL(f)">
+                    <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" data-max-mb="3" class="sr-only"
+                           @change="const f = $event.target.files[0]; if (f && f.size <= 3 * 1024 * 1024) preview = URL.createObjectURL(f)">
                 </div>
 
                 <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -158,5 +158,16 @@
 
             <button class="btn-primary w-full py-4 text-base">{{ $isCreation ? 'Créer mon profil' : 'Enregistrer' }}</button>
         </form>
+
+        @unless ($isCreation)
+            <section class="mt-8 grid grid-cols-1 gap-3 border-t border-sand pt-6">
+                <h2 class="font-bold text-navy-900">Mon compte</h2>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="btn-light w-full"><x-icon name="logout" class="size-4" /> Se déconnecter</button>
+                </form>
+                <a href="{{ route('account-deletion.create') }}" class="btn-danger w-full">Supprimer mon compte</a>
+            </section>
+        @endunless
     </div>
 </x-dynamic-component>

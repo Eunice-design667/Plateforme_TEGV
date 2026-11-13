@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\AccountDeletionController;
 use App\Http\Controllers\Admin\LeaderApprovalController;
 use App\Http\Controllers\Admin\QrCodeController;
 use App\Http\Controllers\AnnouncementController;
@@ -55,6 +56,9 @@ Route::middleware(['auth', 'cache.headers:private;no_store;no_cache;must_revalid
     Route::middleware('profile.completed')->group(function () {
         Route::get('/accueil', HomeController::class)->name('home');
         Route::get('/profil', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::get('/profil/supprimer', [AccountDeletionController::class, 'create'])->name('account-deletion.create');
+        Route::post('/profil/supprimer', [AccountDeletionController::class, 'store'])->name('account-deletion.store');
+        Route::delete('/profil/supprimer', [AccountDeletionController::class, 'destroy'])->name('account-deletion.destroy');
 
         Route::get('/annuaire', DirectoryController::class)->name('directory');
         Route::get('/membres/{member}', [MemberController::class, 'show'])->name('members.show');

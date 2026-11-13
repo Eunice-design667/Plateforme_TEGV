@@ -16,3 +16,8 @@ Schedule::command('tegv:photos-facebook')
     ->weeklyOn(2, '05:30')
     ->withoutOverlapping()
     ->onOneServer();
+
+Schedule::command('tegv:supprimer-comptes')
+    ->dailyAt('03:00')
+    ->withoutOverlapping()
+    ->onOneServer();

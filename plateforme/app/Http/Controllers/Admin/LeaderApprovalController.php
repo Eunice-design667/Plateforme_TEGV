@@ -17,6 +17,7 @@ class LeaderApprovalController extends Controller
             'pending' => User::query()->where('leader_status', LeaderStatus::Pending->value)->oldest('leader_requested_at')->get(),
             'approved' => User::query()->where('leader_status', LeaderStatus::Approved->value)->with('leaderValidator')->orderBy('last_name')->get(),
             'admins' => User::query()->where('is_admin', true)->orderBy('last_name')->get(),
+            'deletions' => User::query()->whereNotNull('deletion_requested_at')->oldest('deletion_requested_at')->get(),
         ]);
     }
 

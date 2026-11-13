@@ -3,7 +3,7 @@
     "short_name": "TEGV",
     "description": "Annuaire des membres, absences, signalements et informations du TEGV.",
     "lang": "fr",
-    "start_url": "/accueil",
+    "start_url": "/",
     "scope": "/",
     "display": "standalone",
     "background_color": "#faf6ee",

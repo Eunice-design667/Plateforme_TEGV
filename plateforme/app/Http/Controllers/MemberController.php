@@ -10,7 +10,7 @@ class MemberController extends Controller
 {
     public function show(User $member): View
     {
-        abort_unless($member->hasCompletedProfile(), 404);
+        abort_unless($member->hasCompletedProfile() && ! $member->isPendingDeletion(), 404);
 
         return view('members.show', [
             'member' => $member,

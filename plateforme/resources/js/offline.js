@@ -93,7 +93,7 @@ function restore(form, values) {
     return restored;
 }
 
-function toast(message, tone = 'info') {
+export function toast(message, tone = 'info') {
     const colors = {
         info: 'background:#1f2a63;color:#fff',
         warning: 'background:#c41c14;color:#fff',

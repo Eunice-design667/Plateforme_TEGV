@@ -28,6 +28,8 @@ class LoginController extends Controller
         }
 
         $request->session()->regenerate();
+        // Without "Rester connecté", closing the app logs the member out (see resources/js/navigation.js).
+        $request->session()->put('ephemeral', ! $request->boolean('remember'));
 
         return redirect()->intended(route('home'));
     }

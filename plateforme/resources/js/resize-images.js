@@ -1,4 +1,9 @@
+import { toast } from './offline';
+
 /**
+ * The size limit of a picture (data-max-mb) is checked on the original file, before any
+ * shrinking, so members get a clear message (test plan F1-03).
+ *
  * Pictures are shrunk on the phone before sending (max 1600 px, JPEG): uploads stay
  * under the 4.5 MB request limit of the hosting and use less mobile data.
  */
@@ -44,7 +49,22 @@ export default function setupImageResizing() {
 
         const file = input.files?.[0];
 
-        if (!file || typeof DataTransfer === 'undefined') {
+        if (!file) {
+            return;
+        }
+
+        const maxMb = Number(input.dataset.maxMb || 0);
+
+        if (maxMb && file.size > maxMb * 1024 * 1024) {
+            const sizeMb = (file.size / 1024 / 1024).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+            input.value = '';
+            input.dispatchEvent(new CustomEvent('photo-refusee', { bubbles: true }));
+            toast(`Cette image fait ${sizeMb} Mo : la limite est de ${maxMb} Mo. Choisissez une image plus légère.`, 'warning');
+
+            return;
+        }
+
+        if (typeof DataTransfer === 'undefined') {
             return;
         }
 
