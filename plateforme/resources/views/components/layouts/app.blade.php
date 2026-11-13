@@ -113,7 +113,6 @@
                             <a href="{{ route('admin.qr-code') }}" data-nav class="flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold text-navy-800 hover:bg-cream"><x-icon name="qr" class="size-4" /> QR code visiteurs</a>
                         @endif
                         <div class="my-1 border-t border-sand"></div>
-                        <button type="button" data-quit class="flex min-h-11 w-full items-center gap-3 rounded-2xl px-3 text-left text-sm font-semibold text-navy-800 hover:bg-cream"><x-icon name="x" class="size-4" /> Quitter l’application</button>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="flex min-h-11 w-full items-center gap-3 rounded-2xl px-3 text-left text-sm font-semibold text-crimson-600 hover:bg-crimson-50"><x-icon name="logout" class="size-4" /> Se déconnecter</button>

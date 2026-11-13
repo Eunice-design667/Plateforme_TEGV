@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Artisan;
 
 /**
  * Called once a day by Vercel Cron (the free plan allows one run per day):
- * birthdays and expired account deletions every day, visitor thanks on Monday,
- * Facebook photos on Tuesday.
+ * birthdays, expired account deletions and the thanks to the previous days' visitors
+ * every day (so Sunday's visitors on Monday), Facebook photos on Tuesday.
  * Vercel sends "Authorization: Bearer <CRON_SECRET>".
  */
 class DailyTasksController extends Controller
@@ -20,11 +20,7 @@ class DailyTasksController extends Controller
 
         abort_if($secret === '' || ! hash_equals("Bearer {$secret}", (string) $request->header('Authorization')), 401);
 
-        $tasks = ['tegv:anniversaires', 'tegv:supprimer-comptes'];
-
-        if (today()->isMonday()) {
-            $tasks[] = 'tegv:remercier-visiteurs';
-        }
+        $tasks = ['tegv:anniversaires', 'tegv:supprimer-comptes', 'tegv:remercier-visiteurs'];
 
         if (today()->isTuesday()) {
             $tasks[] = 'tegv:photos-facebook';

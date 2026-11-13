@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('tegv:remercier-visiteurs')
-    ->weeklyOn(1, config('tegv.thanks_time'))
+    ->dailyAt(config('tegv.thanks_time'))
     ->withoutOverlapping(120)
     ->onOneServer();
 

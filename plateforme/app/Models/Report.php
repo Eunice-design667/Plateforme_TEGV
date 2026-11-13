@@ -33,4 +33,19 @@ class Report extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function handler(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'handled_by');
+    }
+
+    public function markHandledBy(?User $leader): void
+    {
+        $this->handled_at = $leader ? now() : null;
+        $this->handled_by = $leader?->id;
+        $this->save();
+    }
 }

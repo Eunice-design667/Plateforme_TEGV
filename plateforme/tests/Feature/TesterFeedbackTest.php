@@ -35,8 +35,7 @@ class TesterFeedbackTest extends TestCase
     {
         $this->actingAs(User::factory()->create())->get(route('home'))
             ->assertSee('Menu du compte')
-            ->assertSee('Se déconnecter')
-            ->assertSee('Quitter l’application', false);
+            ->assertSee('Se déconnecter');
 
         $this->actingAs(User::factory()->create())->get(route('profile.edit'))->assertSee('Se déconnecter')->assertSee('Supprimer mon compte');
     }

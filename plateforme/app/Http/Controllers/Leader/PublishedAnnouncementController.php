@@ -14,13 +14,30 @@ use Illuminate\View\View;
  */
 class PublishedAnnouncementController extends Controller
 {
-    public function edit(Announcement $announcement): View
+    public function edit(Request $request, Announcement $announcement): View
     {
-        return view('leader.announcement-edit', ['announcement' => $announcement->load('author')]);
+        $leader = $request->user();
+        $reviewedByAnother = $announcement->isBeingReviewedByAnotherThan($leader);
+
+        // Opening the review marks it as "en cours de relecture" for the other leaders.
+        if (! $reviewedByAnother && $announcement->status !== AnnouncementStatus::Published) {
+            $announcement->claimed_by = $leader->id;
+            $announcement->claimed_at = now();
+            $announcement->save();
+        }
+
+        return view('leader.announcement-edit', [
+            'announcement' => $announcement->load('author', 'claimer', 'validator'),
+            'reviewedByAnother' => $reviewedByAnother,
+        ]);
     }
 
     public function update(Request $request, Announcement $announcement): RedirectResponse
     {
+        if ($announcement->status === AnnouncementStatus::Published && $announcement->validated_by !== $request->user()->id) {
+            return redirect()->route('leader.dashboard')->with('status', "Cette information a déjà été publiée par {$announcement->validator?->full_name}.");
+        }
+
         $announcement->fill($request->validate([
             'title' => ['required', 'string', 'max:120'],
             'body' => ['required', 'string', 'max:3000'],
@@ -30,6 +47,8 @@ class PublishedAnnouncementController extends Controller
             $announcement->status = AnnouncementStatus::Published;
             $announcement->published_at = now();
             $announcement->validator()->associate($request->user());
+            $announcement->claimed_by = null;
+            $announcement->claimed_at = null;
         }
 
         $announcement->save();

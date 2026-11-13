@@ -4,6 +4,12 @@
         <h1 class="mt-3 text-3xl font-serif font-semibold tracking-tight text-navy-900">Relire et publier</h1>
         <p class="mt-1 text-sm text-muted">Proposée par {{ $announcement->author->full_name }}. Une fois publiée, elle apparaît chez tous les chrétiens de TEGV.</p>
 
+        @if ($announcement->status->value === 'published')
+            <p class="mt-4 rounded-2xl bg-navy-50 p-4 text-sm text-navy-900 ring-1 ring-navy-100"><strong>Déjà publiée</strong> par {{ $announcement->validator?->full_name ?? 'un responsable' }} le {{ $announcement->published_at?->translatedFormat('j F à H\hi') }}.</p>
+        @elseif ($reviewedByAnother)
+            <p class="mt-4 rounded-2xl bg-gold-50 p-4 text-sm text-navy-900 ring-1 ring-gold-100"><strong>En cours de relecture</strong> par {{ $announcement->claimer?->full_name }} depuis {{ $announcement->claimed_at->format('H\hi') }}. Vérifiez avec lui ou elle avant de la publier, pour ne pas la traiter deux fois.</p>
+        @endif
+
         <form method="POST" action="{{ route('leader.announcements.update', $announcement) }}" data-draft="relecture-{{ $announcement->id }}" class="card mt-5 grid grid-cols-1 gap-5 p-5 sm:p-6">
             @csrf @method('PUT')
             <x-field label="Titre" name="title">

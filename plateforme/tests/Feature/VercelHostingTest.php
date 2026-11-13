@@ -43,8 +43,7 @@ class VercelHostingTest extends TestCase
         Carbon::setTestNow('2026-11-17 10:00:00'); // Tuesday
         $this->get(route('daily-tasks'), $headers)
             ->assertOk()
-            ->assertJsonStructure(['tegv:anniversaires', 'tegv:photos-facebook'])
-            ->assertJsonMissingPath('tegv:remercier-visiteurs');
+            ->assertJsonStructure(['tegv:anniversaires', 'tegv:photos-facebook', 'tegv:remercier-visiteurs']);
     }
 
     public function test_deploy_adds_demo_data_only_once(): void

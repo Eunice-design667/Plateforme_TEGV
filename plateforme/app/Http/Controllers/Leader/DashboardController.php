@@ -24,22 +24,22 @@ class DashboardController extends Controller
             'tab' => $tab,
             'counts' => [
                 'validations' => Announcement::query()->proposed()->count(),
-                'absences' => Absence::query()->whereDate('ends_on', '>=', today())->count(),
+                'absences' => Absence::query()->whereDate('ends_on', '>=', today())->whereNull('handled_at')->count(),
                 'visiteurs' => Visitor::query()->whereDate('visited_on', '>=', today()->subDays(7))->count(),
                 'signalements' => Report::query()->whereNull('handled_at')->count(),
                 'droits' => User::query()->where('leader_status', LeaderStatus::Pending->value)->count(),
             ],
             'proposals' => $tab === 'validations'
-                ? Announcement::query()->proposed()->with('author')->oldest()->get()
+                ? Announcement::query()->proposed()->with('author', 'claimer')->oldest()->get()
                 : collect(),
             'absences' => $tab === 'absences'
-                ? Absence::query()->with('user')->whereDate('ends_on', '>=', today()->subDays(30))->orderBy('starts_on')->get()
+                ? Absence::query()->with('user', 'handler')->whereDate('ends_on', '>=', today()->subDays(30))->orderByRaw('handled_at is not null')->orderBy('starts_on')->get()
                 : collect(),
             'visitors' => $tab === 'visiteurs'
                 ? Visitor::query()->latest('visited_on')->latest('id')->paginate(30)->withQueryString()
                 : collect(),
             'reports' => $tab === 'signalements'
-                ? Report::query()->with('user')->orderByRaw('handled_at is not null')->latest()->get()
+                ? Report::query()->with('user', 'handler')->orderByRaw('handled_at is not null')->latest()->get()
                 : collect(),
         ]);
     }

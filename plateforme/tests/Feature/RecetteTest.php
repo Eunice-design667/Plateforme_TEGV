@@ -338,7 +338,7 @@ class RecetteTest extends TestCase
         $viewer = User::factory()->create(['birth_day' => 3, 'birth_month' => 5]);
 
         $this->actingAs($viewer)->get(route('home'))->assertSee('Jacques, Jean et Paul');
-        $this->actingAs(User::factory()->create())->get(route('members.show', $viewer))->assertDontSee('3 mai')->assertDontSee('03/05');
+        $this->actingAs(User::factory()->create(['birth_day' => 1, 'birth_month' => 1]))->get(route('members.show', $viewer))->assertDontSee('3 mai')->assertDontSee('03/05');
         $this->actingAs($viewer)->get(route('directory'))->assertDontSee('3 mai');
 
         Carbon::setTestNow('2026-11-12 09:00:00');

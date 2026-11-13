@@ -25,6 +25,7 @@ class Announcement extends Model
         return [
             'status' => AnnouncementStatus::class,
             'published_at' => 'datetime',
+            'claimed_at' => 'datetime',
         ];
     }
 
@@ -72,5 +73,23 @@ class Announcement extends Model
         $title = $this->validator->hasChurchRole(ChurchRole::Pasteur) ? 'pasteur' : 'diacre';
 
         return "par {$this->validator->full_name} ({$title})";
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function claimer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'claimed_by');
+    }
+
+    /**
+     * Another leader opened it for review in the last 30 minutes.
+     */
+    public function isBeingReviewedByAnotherThan(User $leader): bool
+    {
+        return $this->claimed_by !== null
+            && $this->claimed_by !== $leader->id
+            && $this->claimed_at?->gt(now()->subMinutes(30));
     }
 }

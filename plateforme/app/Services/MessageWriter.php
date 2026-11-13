@@ -33,7 +33,7 @@ class MessageWriter
             ? "Le visiteur vient de l'église « {$originChurch} »."
             : "Le visiteur n'a pas d'église pour l'instant.";
 
-        $prompt = "Écris le message de remerciement envoyé le lundi à {$firstName}, {$visit}. "
+        $prompt = "Écris le message de remerciement envoyé le lendemain de sa visite à {$firstName}, {$visit}. "
             ."{$context} Remercie-le pour sa présence, dis-lui qu'il est le bienvenu et invite-le à revenir "
             .'(culte tous les dimanches de 8h à 10h30, étude biblique le mardi et prière le vendredi de 19h à 20h30).';
 

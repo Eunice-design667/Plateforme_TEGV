@@ -28,10 +28,13 @@ class ReportController extends Controller
     /**
      * A pastor or deacon marks the report as taken care of.
      */
-    public function update(Report $report): RedirectResponse
+    public function update(Request $request, Report $report): RedirectResponse
     {
-        $report->handled_at = $report->handled_at ? null : now();
-        $report->save();
+        if ($report->handled_at && $report->handled_by !== $request->user()->id && ! $request->boolean('reopen')) {
+            return back()->with('status', "Ce signalement a déjà été traité par {$report->handler?->full_name}.");
+        }
+
+        $report->markHandledBy($report->handled_at ? null : $request->user());
 
         return back()->with('status', $report->handled_at ? 'Signalement marqué comme traité.' : 'Signalement rouvert.');
     }

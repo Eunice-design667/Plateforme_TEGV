@@ -30,7 +30,7 @@
                 </span>
                 <span class="mt-3 block text-3xl font-extrabold">{{ $counts[$key] }}</span>
                 <span @class(['block text-xs font-semibold', 'text-white/70' => $tab === $key, 'text-muted' => $tab !== $key])>
-                    {{ $label }}{{ $key === 'visiteurs' ? ' (7 jours)' : ($key === 'absences' ? ' en cours' : ($key === 'signalements' ? ' à traiter' : '')) }}
+                    {{ $label }}{{ $key === 'visiteurs' ? ' (7 jours)' : ($key === 'absences' ? ' à traiter' : ($key === 'signalements' ? ' à traiter' : '')) }}
                 </span>
             </a>
         @endforeach
@@ -51,6 +51,9 @@
                         <div class="min-w-0">
                             <h3 class="font-extrabold text-navy-900">{{ $proposal->title }}</h3>
                             <p class="text-xs text-muted">Proposée par {{ $proposal->author->full_name }} · {{ $proposal->created_at->diffForHumans() }}</p>
+                            @if ($proposal->isBeingReviewedByAnotherThan(auth()->user()))
+                                <span class="chip mt-2 bg-gold-100 text-gold-600"><x-icon name="eye" class="size-3.5" /> En relecture par {{ $proposal->claimer?->full_name }} depuis {{ $proposal->claimed_at->format('H\hi') }}</span>
+                            @endif
                         </div>
                         <a href="{{ route('leader.announcements.edit', $proposal) }}" class="btn-primary px-4 py-2"><x-icon name="edit" class="size-4" /> Relire et publier</a>
                     </div>
@@ -63,7 +66,7 @@
             <h2 class="text-xl font-serif font-semibold text-navy-900">Absences</h2>
             <div class="card mt-3 divide-y divide-sand overflow-hidden">
                 @forelse ($absences as $absence)
-                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 p-4">
+                    <div @class(['flex flex-wrap items-center gap-x-4 gap-y-2 p-4', 'opacity-60' => $absence->handled_at])>
                         <span class="flex w-24 shrink-0 flex-col rounded-2xl bg-cream px-3 py-2 text-center ring-1 ring-sand">
                             <span class="text-xs font-bold text-navy-900">{{ $absence->starts_on->translatedFormat('j M') }}</span>
                             <span class="text-[11px] text-muted">au {{ $absence->ends_on->translatedFormat('j M') }}</span>
@@ -74,7 +77,19 @@
                                 @if ($absence->ends_on->isPast())<span class="chip ml-1 bg-sand text-muted">Terminée</span>@endif
                             </p>
                             <p class="text-sm text-muted">{{ $absence->reason }}</p>
+                            @if ($absence->handled_at)
+                                <p class="mt-1 flex items-center gap-1 text-xs font-semibold text-navy-700"><x-icon name="check" class="size-3.5" /> Traitée par {{ $absence->handler?->full_name ?? 'un responsable' }} le {{ $absence->handled_at->translatedFormat('j M à H\hi') }}</p>
+                            @endif
                         </div>
+                        <form method="POST" action="{{ route('leader.absences.update', $absence) }}">
+                            @csrf @method('PATCH')
+                            @if ($absence->handled_at)
+                                <input type="hidden" name="reopen" value="1">
+                                <button class="btn-light px-4 py-2">Rouvrir</button>
+                            @else
+                                <button class="btn-primary px-4 py-2"><x-icon name="check" class="size-4" /> Marquer comme traitée</button>
+                            @endif
+                        </form>
                     </div>
                 @empty
                     <p class="p-5 text-sm text-muted">Aucune absence signalée.</p>
@@ -132,9 +147,13 @@
                             <span @class(['chip', 'bg-crimson-500 text-white' => $report->type === ReportType::Deces, 'bg-gold-100 text-gold-600' => $report->type !== ReportType::Deces])>{{ $report->type->label() }}</span>
                             <h3 class="mt-2 font-extrabold text-navy-900">{{ $report->concerned_person }}</h3>
                             <p class="text-xs text-muted">Signalé par {{ $report->user->full_name }} · {{ $report->created_at->diffForHumans() }}</p>
+                            @if ($report->handled_at)
+                                <p class="mt-1 flex items-center gap-1 text-xs font-semibold text-navy-700"><x-icon name="check" class="size-3.5" /> Traité par {{ $report->handler?->full_name ?? 'un responsable' }} le {{ $report->handled_at->translatedFormat('j M à H\hi') }}</p>
+                            @endif
                         </div>
                         <form method="POST" action="{{ route('leader.reports.update', $report) }}">
                             @csrf @method('PATCH')
+                            @if ($report->handled_at)<input type="hidden" name="reopen" value="1">@endif
                             <button class="{{ $report->handled_at ? 'btn-light' : 'btn-primary' }} px-4 py-2"><x-icon name="check" class="size-4" /> {{ $report->handled_at ? 'Rouvrir' : 'Marquer comme traité' }}</button>
                         </form>
                     </div>

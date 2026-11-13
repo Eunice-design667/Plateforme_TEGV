@@ -12,6 +12,7 @@ use App\Http\Controllers\BirthdayMessageController;
 use App\Http\Controllers\DailyTasksController;
 use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Leader\AbsenceHandlingController;
 use App\Http\Controllers\Leader\DashboardController;
 use App\Http\Controllers\Leader\PublishedAnnouncementController;
 use App\Http\Controllers\Leader\VisitorController;
@@ -81,6 +82,7 @@ Route::middleware(['auth', 'cache.headers:private;no_store;no_cache;must_revalid
             Route::put('/informations/{announcement}', [PublishedAnnouncementController::class, 'update'])->name('announcements.update');
             Route::delete('/informations/{announcement}', [PublishedAnnouncementController::class, 'destroy'])->name('announcements.destroy');
             Route::patch('/signalements/{report}', [ReportController::class, 'update'])->name('reports.update');
+            Route::patch('/absences/{absence}', [AbsenceHandlingController::class, 'update'])->name('absences.update');
             Route::delete('/visiteurs/{visitor}', [VisitorController::class, 'destroy'])->name('visitors.destroy');
         });
 

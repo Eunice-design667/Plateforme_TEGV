@@ -18,7 +18,9 @@ class ThankSundayVisitors extends Command
 {
     public function handle(MessageWriter $writer, WhatsAppManager $whatsApp): int
     {
-        $visitors = Visitor::query()->awaitingThanks()->orderBy('id')->get();
+        // Visitors of previous days only: Sunday's visitors are thanked on Monday, and those
+        // left over when the task runs out of time are thanked the next day.
+        $visitors = Visitor::query()->awaitingThanks()->whereDate('visited_on', '<', today())->orderBy('id')->get();
 
         if ($visitors->isEmpty()) {
             $this->info('Aucun visiteur à remercier.');
