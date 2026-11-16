@@ -3,16 +3,11 @@
 namespace Tests\Feature;
 
 use App\Enums\AnnouncementStatus;
-use App\Enums\ThanksStatus;
 use App\Models\Absence;
 use App\Models\Announcement;
 use App\Models\Report;
 use App\Models\User;
-use App\Models\Visitor;
-use App\Services\WhatsApp\WhatsAppManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
-use Mockery\MockInterface;
 use Tests\TestCase;
 
 /**
@@ -91,22 +86,6 @@ class LeaderCollaborationTest extends TestCase
             ->assertRedirect(route('visitors.create'))
             ->assertSessionHas('status')
             ->assertSessionHasInput('first_name', 'Awa');
-    }
-
-    public function test_visitors_are_thanked_the_day_after_their_visit(): void
-    {
-        Carbon::setTestNow('2026-11-15 09:00:00'); // Sunday
-        $sunday = Visitor::factory()->create(['visited_on' => today()]);
-        $this->mock(WhatsAppManager::class, function (MockInterface $mock): void {
-            $mock->expects('send')->once()->andReturn('log');
-        });
-
-        $this->artisan('tegv:remercier-visiteurs');
-        $this->assertSame(ThanksStatus::Pending, $sunday->refresh()->thanks_status);
-
-        Carbon::setTestNow('2026-11-16 10:00:00'); // Monday
-        $this->artisan('tegv:remercier-visiteurs');
-        $this->assertSame(ThanksStatus::Sent, $sunday->refresh()->thanks_status);
     }
 
     public function test_the_quit_button_is_gone(): void

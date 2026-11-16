@@ -5,20 +5,16 @@ namespace Tests\Feature;
 use App\Enums\AnnouncementStatus;
 use App\Enums\LeaderStatus;
 use App\Enums\ReportType;
-use App\Enums\ThanksStatus;
 use App\Models\Absence;
 use App\Models\Announcement;
 use App\Models\BirthdayMessage;
 use App\Models\Report;
 use App\Models\User;
 use App\Models\Visitor;
-use App\Services\MessageWriter;
-use App\Services\WhatsApp\WhatsAppManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
-use Mockery\MockInterface;
 use Tests\TestCase;
 
 /**
@@ -199,7 +195,7 @@ class RecetteTest extends TestCase
         $this->get(route('visitors.create'))
             ->assertSee('name="first_name"', false)->assertSee('name="last_name"', false)
             ->assertSee('name="origin_church"', false)->assertSee('Je n’ai pas d’église')
-            ->assertSee('name="whatsapp"', false)->assertSee('message de remerciement du TEGV sur WhatsApp')
+            ->assertSee('name="whatsapp"', false)->assertSee('enregistre mes coordonnées')
             ->assertDontSee('type="date"', false)
             ->assertSee('/images/logo-rond.png');
 
@@ -222,7 +218,7 @@ class RecetteTest extends TestCase
 
         $this->followRedirects($this->get(route('visitors.thanks')))->assertSee('Merci');
         $this->actingAs(User::factory()->deacon()->create())->get(route('leader.dashboard', ['onglet' => 'visiteurs']))
-            ->assertSee('Awa Ilboudo')->assertSee('Pas d’église', false)->assertSee('dim. 8 nov.');
+            ->assertSee('Awa Ilboudo')->assertSee('Pas d’église', false)->assertSee('Dimanche 8 novembre 2026');
     }
 
     public function test_f2_09_f3_04_f4_03_only_approved_leaders_see_private_lists(): void
@@ -371,8 +367,6 @@ class RecetteTest extends TestCase
     {
         Carbon::setTestNow('2026-11-11 08:00:00');
         $member = User::factory()->create(['first_name' => 'Esther', 'birth_day' => 11, 'birth_month' => 11]);
-        $this->mock(WhatsAppManager::class, fn (MockInterface $mock) => $mock->shouldNotReceive('send'));
-
         $this->actingAs($member)->get(route('home'))->assertSee('Joyeux anniversaire Esther');
         $this->actingAs($member)->get(route('home'));
         $this->artisan('tegv:anniversaires');
@@ -411,23 +405,6 @@ class RecetteTest extends TestCase
         $this->assertFalse($member->refresh()->isLeader());
     }
 
-    public function test_ag_02_standard_thanks_are_varied_and_personal(): void
-    {
-        $writer = app(MessageWriter::class);
-        $messages = collect(['Awa', 'Issa', 'Mariam', 'Paul', 'Rasmata', 'Jean'])->map(fn (string $name) => $writer->templateThanks($name));
-
-        $messages->each(fn (string $message, int $i) => $this->assertStringContainsString(['Awa', 'Issa', 'Mariam', 'Paul', 'Rasmata', 'Jean'][$i], $message));
-        $this->assertGreaterThan(1, $messages->map(fn (string $message) => preg_replace('/^\S+\s+\S+/', '', $message))->unique()->count());
-    }
-
-    public function test_ag_03_sent_date_is_shown(): void
-    {
-        Visitor::factory()->create(['first_name' => 'Awa', 'thanks_status' => ThanksStatus::Sent, 'thanks_sent_at' => Carbon::parse('2026-11-09 10:00')]);
-
-        $this->actingAs(User::factory()->deacon()->create())->get(route('leader.dashboard', ['onglet' => 'visiteurs']))
-            ->assertSee('Envoyé')->assertSee('le 9 nov. à 10h00');
-    }
-
     public function test_ag_10_and_s_09_a_visitor_can_be_deleted_on_request(): void
     {
         $visitor = Visitor::factory()->create();
@@ -436,8 +413,6 @@ class RecetteTest extends TestCase
         $this->actingAs(User::factory()->deacon()->create())->delete(route('leader.visitors.destroy', $visitor))->assertRedirect();
 
         $this->assertModelMissing($visitor);
-        $this->mock(WhatsAppManager::class, fn (MockInterface $mock) => $mock->shouldNotReceive('send'));
-        $this->artisan('tegv:remercier-visiteurs')->expectsOutput('Aucun visiteur à remercier.');
     }
 
     public function test_s_05_password_strength_and_login_throttling(): void
@@ -510,8 +485,8 @@ class RecetteTest extends TestCase
         $this->assertStringContainsString('hors-ligne.html', (string) file_get_contents(public_path('sw.js')));
     }
 
-    public function test_p_06_monday_task_is_scheduled(): void
+    public function test_p_06_daily_tasks_are_scheduled(): void
     {
-        $this->artisan('schedule:list')->expectsOutputToContain('tegv:remercier-visiteurs')->assertSuccessful();
+        $this->artisan('schedule:list')->expectsOutputToContain('tegv:anniversaires')->assertSuccessful();
     }
 }

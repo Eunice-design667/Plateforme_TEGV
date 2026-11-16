@@ -1,13 +1,19 @@
 /**
- * Phone "back" button (testers' feedback):
- * - on any page other than the home screen, "back" first returns to the home screen;
- * - on the home screen, "back" leaves the app (it skips the pages seen before);
- * - moving between the main sections does not pile pages up in the history.
+ * Phone "back" button (testers' feedback): "back" returns to the home screen, then
+ * "back" again leaves the app.
+ *
+ * The history is kept to two entries, home + the current page: from home a link adds
+ * an entry; from any other page, links and searches REPLACE the current entry. Phones
+ * ignore history entries a page adds by itself (pushState without a tap), so nothing
+ * relies on them. A form sent from a page still adds an entry: when "back" lands on such
+ * an intermediate page, it keeps going back to the home screen by itself.
+ *
  * Without "Rester connecté", reopening the app (new browsing session) logs out and
  * shows the first page again.
  */
 const OPEN_KEY = 'tegv-session-ouverte';
-const GUARD = 'tegv-retour-accueil';
+const LAST_PAGE = 'tegv-derniere-page';
+const EXITING = 'tegv-sortie';
 
 function sessionMark(value) {
     try {
@@ -53,9 +59,6 @@ function homePath() {
     return new URL(document.body.dataset.homeUrl ?? '/accueil', location.href).pathname;
 }
 
-/**
- * Small per-tab memory (sessionStorage), safe when storage is blocked.
- */
 function memory(key, value) {
     try {
         if (value === undefined) {
@@ -68,136 +71,105 @@ function memory(key, value) {
     }
 }
 
-const DEPTH = 'tegv-profondeur'; // how many pages away from the home screen the current page is
-const LEAVING = 'tegv-sortie-en-cours';
-const GOING_HOME = 'tegv-retour-en-cours';
-const NAV_TARGET = 'tegv-rubrique-suivante';
-
 /**
- * Reached through "back" (not by a click): keep going back until the app is left.
- * At the very first entry history.back() does nothing, so the page shows again after a moment.
+ * Keep going back by itself; at the first entry history.back() does nothing, so the
+ * page shows again after a moment.
  */
-function continueLeaving() {
-    memory(LEAVING, '1');
+function keepGoingBack() {
     document.body.style.visibility = 'hidden';
     history.back();
     setTimeout(() => {
-        memory(LEAVING, null);
+        memory(EXITING, null);
         document.body.style.visibility = '';
-    }, 800);
-}
-
-/**
- * Every page other than home holds two history entries ("base" + "page"). From a page's
- * base entry, the home entry sits 2 × depth − 1 steps back.
- */
-function goHome(depth) {
-    if (!depth) {
-        location.replace(document.body.dataset.homeUrl ?? '/accueil');
-
-        return;
-    }
-
-    memory(GOING_HOME, '1');
-    history.go(-(2 * depth - 1));
+    }, 900);
 }
 
 function setupBackButton() {
-    const onHome = location.pathname === homePath();
-    const navigation = performance.getEntriesByType('navigation')[0];
+    const home = homePath();
+    const onHome = location.pathname === home;
 
-    window.addEventListener('pageshow', (event) => {
-        const cameBack = event.persisted || navigation?.type === 'back_forward';
-
+    const arrived = (cameBack) => {
         if (!cameBack) {
-            memory(LEAVING, null);
+            memory(EXITING, null);
 
             return;
         }
 
-        if (onHome && memory(GOING_HOME)) {
-            memory(GOING_HOME, null);
-            memory(DEPTH, '0');
+        // "Back" pressed on the home screen = leave the app: go through every older entry.
+        if (memory(EXITING) || memory(LAST_PAGE) === home) {
+            memory(EXITING, '1');
+            keepGoingBack();
 
             return;
         }
 
-        continueLeaving();
-    });
-
-    if (onHome) {
-        if (navigation?.type !== 'back_forward') {
-            memory(DEPTH, '0');
+        // "Back" pressed on another page: continue until the home screen, and stop there.
+        if (!onHome) {
+            keepGoingBack();
         }
+    };
 
-        return;
-    }
+    window.addEventListener('pagehide', () => memory(LAST_PAGE, location.pathname));
 
-    let depth = history.state?.depth ?? null;
+    // A page loaded through "back" (the pageshow event may already be past when this runs).
+    arrived(performance.getEntriesByType('navigation')[0]?.type === 'back_forward');
 
-    if (history.state?.[GUARD] !== 'page' && navigation?.type !== 'back_forward') {
-        const replacing = memory(NAV_TARGET + '-profondeur');
-        const previous = memory(DEPTH);
-        depth = replacing !== null ? Number(replacing) : previous !== null ? Number(previous) + 1 : null;
-        memory(NAV_TARGET + '-profondeur', null);
-
-        history.replaceState({ ...history.state, [GUARD]: 'base', depth }, '');
-        history.pushState({ [GUARD]: 'page', depth }, '');
-    }
-
-    memory(DEPTH, depth === null ? null : String(depth));
-
-    window.addEventListener('popstate', () => {
-        if (history.state?.[GUARD] !== 'base') {
-            return;
-        }
-
-        const target = memory(NAV_TARGET);
-
-        if (memory(LEAVING)) {
-            history.back();
-        } else if (target) {
-            memory(NAV_TARGET, null);
-            location.replace(target);
-        } else {
-            goHome(history.state.depth);
+    // A page restored from the browser's memory (back-forward cache).
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            arrived(true);
         }
     });
 }
 
-function setupSectionNavigation() {
+function isInternalLink(link, event) {
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return false;
+    }
+
+    if (link.target && link.target !== '_self') {
+        return false;
+    }
+
+    if (link.hasAttribute('download') || link.getAttribute('href')?.startsWith('#')) {
+        return false;
+    }
+
+    const url = new URL(link.href, location.href);
+
+    return url.origin === location.origin && !/\/(deconnexion|visiteurs\/export|admin\/qr-code\/telecharger)/.test(url.pathname);
+}
+
+function setupLinearHistory() {
     const home = homePath();
 
+    if (location.pathname === home) {
+        return;
+    }
+
     document.addEventListener('click', (event) => {
-        const link = event.target.closest('a[data-nav]');
+        const link = event.target.closest('a[href]');
 
-        if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
-            return;
-        }
-
-        const target = new URL(link.href, location.href);
-
-        if (target.origin !== location.origin || target.pathname === location.pathname || location.pathname === home) {
+        if (!isInternalLink(link, event)) {
             return;
         }
 
         event.preventDefault();
-        const depth = history.state?.depth;
+        location.replace(link.href);
+    });
 
-        if (target.pathname === home) {
-            history.state?.[GUARD] === 'page' ? (memory(GOING_HOME, '1'), history.go(-(2 * (depth ?? 1)))) : location.replace(target.href);
+    // Searches and filters (GET forms) replace the page too.
+    document.addEventListener('submit', (event) => {
+        const form = event.target;
 
+        if (!(form instanceof HTMLFormElement) || (form.method || 'get').toLowerCase() !== 'get' || event.defaultPrevented) {
             return;
         }
 
-        // Replace this section by the next one at the same place in the history.
-        if (history.state?.[GUARD] === 'page') {
-            memory(NAV_TARGET, target.href);
-            memory(NAV_TARGET + '-profondeur', depth ?? null);
-            history.back();
-        } else {
-            location.replace(target.href);
-        }
+        event.preventDefault();
+        const url = new URL(form.action || location.href, location.href);
+        url.search = new URLSearchParams(new FormData(form)).toString();
+        location.replace(url.href);
     });
 }
 
@@ -212,6 +184,6 @@ export default function setupNavigation() {
 
     if (document.body.dataset.homeUrl) {
         setupBackButton();
-        setupSectionNavigation();
+        setupLinearHistory();
     }
 }

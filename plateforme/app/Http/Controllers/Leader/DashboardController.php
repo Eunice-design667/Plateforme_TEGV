@@ -10,11 +10,40 @@ use App\Models\Report;
 use App\Models\User;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
     private const TABS = ['validations', 'absences', 'visiteurs', 'signalements'];
+
+    /**
+     * Visitors of one visit date (the latest by default), with the dates available.
+     *
+     * @return array{visitors: Collection<int, Visitor>, visitDates: Collection<int, string>, visitDate: ?string}
+     */
+    private function visitorsOfDay(Request $request): array
+    {
+        $dates = Visitor::query()
+            ->selectRaw('distinct date(visited_on) as day')
+            ->orderByDesc('day')
+            ->limit(104)
+            ->pluck('day')
+            ->map(fn ($day) => substr((string) $day, 0, 10));
+
+        $chosen = (string) $request->query('date');
+        $visitDate = $chosen === 'toutes' ? null : ($dates->contains($chosen) ? $chosen : $dates->first());
+
+        return [
+            'visitDates' => $dates,
+            'visitDate' => $visitDate,
+            'visitors' => Visitor::query()
+                ->when($visitDate, fn ($query) => $query->whereDate('visited_on', $visitDate))
+                ->orderByDesc('visited_on')
+                ->orderBy('last_name')
+                ->get(),
+        ];
+    }
 
     public function __invoke(Request $request): View
     {
@@ -35,9 +64,7 @@ class DashboardController extends Controller
             'absences' => $tab === 'absences'
                 ? Absence::query()->with('user', 'handler')->whereDate('ends_on', '>=', today()->subDays(30))->orderByRaw('handled_at is not null')->orderBy('starts_on')->get()
                 : collect(),
-            'visitors' => $tab === 'visiteurs'
-                ? Visitor::query()->latest('visited_on')->latest('id')->paginate(30)->withQueryString()
-                : collect(),
+            ...($tab === 'visiteurs' ? $this->visitorsOfDay($request) : ['visitors' => collect()]),
             'reports' => $tab === 'signalements'
                 ? Report::query()->with('user', 'handler')->orderByRaw('handled_at is not null')->latest()->get()
                 : collect(),

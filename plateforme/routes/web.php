@@ -16,6 +16,7 @@ use App\Http\Controllers\Leader\AbsenceHandlingController;
 use App\Http\Controllers\Leader\DashboardController;
 use App\Http\Controllers\Leader\PublishedAnnouncementController;
 use App\Http\Controllers\Leader\VisitorController;
+use App\Http\Controllers\Leader\VisitorExportController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PosterController;
 use App\Http\Controllers\ProfileController;
@@ -83,6 +84,7 @@ Route::middleware(['auth', 'cache.headers:private;no_store;no_cache;must_revalid
             Route::delete('/informations/{announcement}', [PublishedAnnouncementController::class, 'destroy'])->name('announcements.destroy');
             Route::patch('/signalements/{report}', [ReportController::class, 'update'])->name('reports.update');
             Route::patch('/absences/{absence}', [AbsenceHandlingController::class, 'update'])->name('absences.update');
+            Route::get('/visiteurs/export', VisitorExportController::class)->name('visitors.export');
             Route::delete('/visiteurs/{visitor}', [VisitorController::class, 'destroy'])->name('visitors.destroy');
         });
 

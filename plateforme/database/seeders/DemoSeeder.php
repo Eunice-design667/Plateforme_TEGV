@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Enums\ChurchRole;
 use App\Enums\LeaderStatus;
 use App\Enums\ReportType;
-use App\Enums\ThanksStatus;
 use App\Models\Absence;
 use App\Models\Announcement;
 use App\Models\Poster;
@@ -95,12 +94,7 @@ class DemoSeeder extends Seeder
         ]);
 
         Visitor::factory()->count(6)->create();
-        Visitor::factory()->count(4)->create([
-            'visited_on' => today()->previous('sunday')->subWeek(),
-            'thanks_status' => ThanksStatus::Sent,
-            'thanks_channel' => 'gateway',
-            'thanks_sent_at' => today()->previous('sunday')->subWeek()->addDay()->setTime(10, 0),
-        ]);
+        Visitor::factory()->count(4)->create(['visited_on' => today()->previous('sunday')->subWeek()]);
 
         User::query()->update(['password' => Hash::make(config('tegv.demo_password'))]);
     }

@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\ThanksStatus;
 use App\Models\Visitor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
@@ -26,7 +25,6 @@ class VisitorFactory extends Factory
             'has_no_church' => fn (array $attributes) => $attributes['origin_church'] === null,
             'whatsapp' => '+226 7'.fake()->numerify('# ## ## ##'),
             'visited_on' => today()->previous(Carbon::SUNDAY),
-            'thanks_status' => ThanksStatus::Pending,
         ];
     }
 }

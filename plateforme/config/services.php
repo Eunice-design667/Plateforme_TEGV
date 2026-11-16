@@ -40,25 +40,4 @@ return [
         'model' => env('ANTHROPIC_MODEL', 'claude-opus-5-5'),
     ],
 
-    'whatsapp' => [
-        // gateway (free, dedicated number), cloud (official paid API) or log (development).
-        'driver' => env('WHATSAPP_DRIVER', 'log'),
-        'fallback' => env('WHATSAPP_FALLBACK'),
-        // Percentage of messages sent through the fallback channel first (0 = only as a backup).
-        'official_share' => env('WHATSAPP_OFFICIAL_SHARE', 0),
-
-        'gateway' => [
-            'url' => env('WHATSAPP_GATEWAY_URL', 'http://127.0.0.1:3001'),
-            'token' => env('WHATSAPP_GATEWAY_TOKEN'),
-        ],
-
-        'cloud' => [
-            'version' => env('WHATSAPP_CLOUD_VERSION', 'v21.0'),
-            'token' => env('WHATSAPP_CLOUD_TOKEN'),
-            'phone_number_id' => env('WHATSAPP_CLOUD_PHONE_NUMBER_ID'),
-            'template' => env('WHATSAPP_CLOUD_TEMPLATE', 'remerciement_visiteur'),
-            'template_language' => env('WHATSAPP_CLOUD_TEMPLATE_LANGUAGE', 'fr'),
-        ],
-    ],
-
 ];

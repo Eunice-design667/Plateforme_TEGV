@@ -32,7 +32,6 @@ rsync -a \
     --exclude public/build --exclude public/hot --exclude public/storage \
     --exclude 'bootstrap/cache/*.php' --exclude 'storage/app/public/*' --exclude 'storage/logs/*' \
     --exclude 'storage/framework/*/*' --exclude 'database/*.sqlite' \
-    --exclude whatsapp-gateway/node_modules --exclude whatsapp-gateway/session \
     --exclude .env --exclude '.env.*' --exclude .vercelignore \
     ./ "$BUILD_DIR/"
 cp .vercel/project.json "$BUILD_DIR/.vercel/"

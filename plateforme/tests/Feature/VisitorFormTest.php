@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ThanksStatus;
 use App\Models\Visitor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -32,7 +31,7 @@ class VisitorFormTest extends TestCase
         $this->get(route('visitors.create'))->assertOk()->assertSee('Église d’origine');
     }
 
-    public function test_a_visitor_is_saved_with_todays_date_and_waits_for_thanks(): void
+    public function test_a_visitor_is_saved_with_todays_date(): void
     {
         Carbon::setTestNow('2026-11-01 09:30:00');
 
@@ -41,7 +40,6 @@ class VisitorFormTest extends TestCase
 
         $visitor = Visitor::sole();
         $this->assertSame('2026-11-01', $visitor->visited_on->toDateString());
-        $this->assertSame(ThanksStatus::Pending, $visitor->thanks_status);
         $this->assertSame('Église Baptiste', $visitor->origin_church);
     }
 

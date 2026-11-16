@@ -36,14 +36,15 @@ class VercelHostingTest extends TestCase
 
         $this->get(route('daily-tasks'), $headers)
             ->assertOk()
-            ->assertJsonStructure(['tegv:anniversaires', 'tegv:remercier-visiteurs'])
+            ->assertJsonStructure(['tegv:anniversaires', 'tegv:supprimer-comptes'])
             ->assertJsonMissingPath('tegv:photos-facebook');
         $this->assertSame($member->id, BirthdayMessage::sole()->user_id);
 
         Carbon::setTestNow('2026-11-17 10:00:00'); // Tuesday
         $this->get(route('daily-tasks'), $headers)
             ->assertOk()
-            ->assertJsonStructure(['tegv:anniversaires', 'tegv:photos-facebook', 'tegv:remercier-visiteurs']);
+            ->assertJsonStructure(['tegv:anniversaires', 'tegv:photos-facebook'])
+            ->assertJsonMissingPath('tegv:remercier-visiteurs');
     }
 
     public function test_deploy_adds_demo_data_only_once(): void

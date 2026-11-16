@@ -2,7 +2,10 @@
     <div class="flex flex-1 flex-col items-center justify-center text-center">
         <span class="flex size-20 items-center justify-center rounded-full bg-gold-400 text-navy-900 shadow-(--shadow-card)"><x-icon name="heart" class="size-9" /></span>
         <h1 class="mt-6 text-3xl font-serif font-semibold tracking-tight text-navy-900">Merci{{ session('visitor_first_name') ? ', '.session('visitor_first_name') : '' }} !</h1>
-        <p class="mt-3 max-w-sm text-[15px] leading-relaxed text-muted">Votre visite est bien enregistrée. Nous vous enverrons un petit message sur WhatsApp. Que Dieu vous bénisse, et à dimanche prochain !</p>
+        <p class="mt-3 max-w-sm text-[15px] leading-relaxed text-muted">Votre visite est bien enregistrée. Toute l’église est heureuse de vous avoir accueilli. Que Dieu vous bénisse, et à dimanche prochain !</p>
+        <a href="{{ route('visitors.create', ['suite' => 1]) }}" class="btn-primary mt-6 w-full py-3.5"><x-icon name="plus" class="size-4" /> Enregistrer une autre personne</a>
+        <p class="mt-2 text-xs text-muted">Vous venez en famille ou en groupe ? Chaque personne peut être enregistrée sur ce même téléphone.@if ($registeredCount > 1) {{ $registeredCount }} personnes enregistrées.@endif</p>
+
         <div class="card mt-8 w-full p-5 text-left">
             <p class="eyebrow">Nos rendez-vous</p>
             <ul class="mt-3 grid grid-cols-1 gap-2 text-sm">
@@ -11,6 +14,6 @@
                 @endforeach
             </ul>
         </div>
-        <p class="mt-8 font-serif text-lg text-crimson-600 italic">Solo Deo Gloria</p>
+        <p class="mt-8 font-serif text-lg text-crimson-600 italic">Soli Deo Gloria</p>
     </div>
 </x-layouts.guest>

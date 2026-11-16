@@ -1,6 +1,5 @@
 @php
     use App\Enums\ReportType;
-    use App\Enums\ThanksStatus;
     use App\Support\PhoneNumber;
 
     $tabs = [
@@ -96,47 +95,46 @@
                 @endforelse
             </div>
         @elseif ($tab === 'visiteurs')
-            <h2 class="text-xl font-serif font-semibold text-navy-900">Visiteurs</h2>
-            <div class="card relative mt-3 overflow-x-auto">
-                <table class="w-full min-w-[40rem] text-left text-sm">
-                    <thead class="bg-cream text-xs text-muted uppercase">
-                        <tr><th class="px-4 py-3">Visite</th><th class="px-4 py-3">Visiteur</th><th class="px-4 py-3">Église d’origine</th><th class="px-4 py-3">WhatsApp</th><th class="px-4 py-3">Remerciement</th><th class="px-4 py-3"><span class="sr-only">Actions</span></th></tr>
-                    </thead>
-                    <tbody class="divide-y divide-sand">
-                        @forelse ($visitors as $visitor)
-                            <tr>
-                                <td class="px-4 py-3 whitespace-nowrap text-muted">{{ $visitor->visited_on->translatedFormat('D j M') }}</td>
-                                <td class="px-4 py-3 font-bold text-navy-900">{{ $visitor->fullName() }}</td>
-                                <td class="px-4 py-3">{{ $visitor->has_no_church ? 'Pas d’église' : $visitor->origin_church }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap"><a href="{{ PhoneNumber::whatsappLink($visitor->whatsapp) }}" target="_blank" rel="noopener" class="inline-flex min-h-11 items-center text-navy-700 underline">{{ PhoneNumber::format($visitor->whatsapp) }}</a></td>
-                                <td class="px-4 py-3">
-                                    <span @class([
-                                        'chip',
-                                        'bg-gold-100 text-gold-600' => $visitor->thanks_status === ThanksStatus::Pending,
-                                        'bg-navy-50 text-navy-700' => $visitor->thanks_status === ThanksStatus::Sent,
-                                        'bg-crimson-50 text-crimson-700' => $visitor->thanks_status === ThanksStatus::Failed,
-                                    ]) title="{{ $visitor->thanks_error ?? $visitor->thanks_message }}">{{ $visitor->thanks_status->label() }}</span>
-                                    @if ($visitor->thanks_sent_at)
-                                        <span class="mt-1 block text-[11px] whitespace-nowrap text-muted">le {{ $visitor->thanks_sent_at->translatedFormat('j M à H\hi') }}</span>
-                                    @elseif ($visitor->thanks_error)
-                                        <span class="mt-1 block max-w-48 text-[11px] text-crimson-700">{{ $visitor->thanks_error }}</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 text-right">
-                                    <form method="POST" action="{{ route('leader.visitors.destroy', $visitor) }}" onsubmit="return confirm(@js('Supprimer définitivement les données de '.$visitor->fullName().' ?'))">
-                                        @csrf @method('DELETE')
-                                        <button class="flex size-11 items-center justify-center rounded-full text-muted hover:bg-crimson-50 hover:text-crimson-600" title="Supprimer les données (à la demande du visiteur)" aria-label="Supprimer {{ $visitor->fullName() }}"><x-icon name="x" class="size-4" /></button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="6" class="px-4 py-5 text-muted">Aucun visiteur enregistré.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <h2 class="font-serif text-xl font-semibold text-navy-900">Visiteurs</h2>
+                @if ($visitDates->isNotEmpty())
+                    <div class="flex flex-wrap gap-2">
+                        <a href="{{ route('leader.visitors.export', array_filter(['format' => 'pdf', 'date' => $visitDate])) }}" class="btn-primary px-4 py-2"><x-icon name="download" class="size-4" /> PDF</a>
+                        <a href="{{ route('leader.visitors.export', array_filter(['format' => 'csv', 'date' => $visitDate])) }}" class="btn-light px-4 py-2"><x-icon name="download" class="size-4" /> Excel (CSV)</a>
+                    </div>
+                @endif
             </div>
-            @if ($visitors instanceof \Illuminate\Contracts\Pagination\Paginator)
-                <div class="mt-4">{{ $visitors->links() }}</div>
+
+            @if ($visitDates->isEmpty())
+                <p class="card mt-3 p-5 text-sm text-muted">Aucun visiteur enregistré pour l’instant.</p>
+            @else
+                <form method="GET" action="{{ route('leader.dashboard') }}" class="mt-3">
+                    <input type="hidden" name="onglet" value="visiteurs">
+                    <label for="date" class="label">Jour de visite</label>
+                    <select id="date" name="date" class="input max-w-sm bg-white" onchange="this.form.requestSubmit()">
+                        @foreach ($visitDates as $day)
+                            <option value="{{ $day }}" @selected($visitDate === $day)>{{ ucfirst(\App\Support\FrenchDate::long(\Illuminate\Support\Carbon::parse($day))) }}</option>
+                        @endforeach
+                        <option value="toutes" @selected($visitDate === null)>Toutes les dates</option>
+                    </select>
+                </form>
+
+                <p class="mt-4 text-sm text-muted">{{ $visitors->count() }} {{ $visitors->count() > 1 ? 'visiteurs' : 'visiteur' }}{{ $visitDate ? ' le '.\App\Support\FrenchDate::long(\Illuminate\Support\Carbon::parse($visitDate), false) : '' }}</p>
+                <div class="card mt-2 divide-y divide-sand">
+                    @foreach ($visitors as $visitor)
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 p-4">
+                            <div class="min-w-0 flex-1">
+                                <p class="font-bold text-navy-900">{{ $visitor->fullName() }}</p>
+                                <p class="text-sm text-muted">{{ $visitor->has_no_church ? 'Pas d’église' : $visitor->origin_church }}@unless ($visitDate) · {{ $visitor->visited_on->translatedFormat('D j M') }}@endunless</p>
+                            </div>
+                            <a href="{{ \App\Support\PhoneNumber::whatsappLink($visitor->whatsapp) }}" target="_blank" rel="noopener" class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-navy-700 underline"><x-icon name="whatsapp" class="size-4" /> {{ \App\Support\PhoneNumber::format($visitor->whatsapp) }}</a>
+                            <form method="POST" action="{{ route('leader.visitors.destroy', $visitor) }}" onsubmit="return confirm(@js('Supprimer définitivement les données de '.$visitor->fullName().' ?'))">
+                                @csrf @method('DELETE')
+                                <button class="flex size-11 items-center justify-center rounded-full text-muted hover:bg-crimson-50 hover:text-crimson-600" title="Supprimer les données (à la demande du visiteur)" aria-label="Supprimer {{ $visitor->fullName() }}"><x-icon name="x" class="size-4" /></button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
             @endif
         @else
             <h2 class="text-xl font-serif font-semibold text-navy-900">Signalements</h2>

@@ -8,7 +8,7 @@
             <img src="/images/logo-rond.png" alt="" class="size-11 rounded-full ring-2 ring-white/60">
             <div>
                 <p class="text-xl font-extrabold">Bon retour !</p>
-                <p class="font-serif text-sm text-gold-300 italic">Solo Deo Gloria</p>
+                <p class="font-serif text-sm text-gold-300 italic">Soli Deo Gloria</p>
             </div>
         </div>
     </div>

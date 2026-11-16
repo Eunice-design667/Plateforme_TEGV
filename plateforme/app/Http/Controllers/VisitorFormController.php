@@ -20,7 +20,10 @@ class VisitorFormController extends Controller
             Cookie::queue(self::DEVICE_COOKIE, (string) Str::uuid(), 60 * 24 * 365);
         }
 
-        return view('visitors.form');
+        // "Enregistrer une autre personne": same church and number as the previous person, editable.
+        $previous = $request->boolean('suite') ? $request->session()->get('visitor.previous') : null;
+
+        return view('visitors.form', ['previous' => $previous]);
     }
 
     public function store(StoreVisitorRequest $request): RedirectResponse
@@ -37,12 +40,19 @@ class VisitorFormController extends Controller
             'device_hash' => self::deviceHash($request),
         ]);
 
+        $request->session()->put('visitor.previous', [
+            'origin_church' => $data['has_no_church'] ? null : $data['origin_church'],
+            'has_no_church' => $data['has_no_church'],
+            'whatsapp' => $data['whatsapp'],
+        ]);
+        $request->session()->increment('visitor.count');
+
         return redirect()->route('visitors.thanks')->with('visitor_first_name', $data['first_name']);
     }
 
-    public function thanks(): View
+    public function thanks(Request $request): View
     {
-        return view('visitors.thanks');
+        return view('visitors.thanks', ['registeredCount' => (int) $request->session()->get('visitor.count', 0)]);
     }
 
     /**

@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.3",
         "anthropic-ai/sdk": "^1.4",
+        "barryvdh/laravel-dompdf": "^3.1",
         "chillerlan/php-qrcode": "^6.0",
         "fakerphp/faker": "^1.24",
         "laravel/framework": "^13.17",

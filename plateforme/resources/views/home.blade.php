@@ -109,7 +109,7 @@
             <div class="relative max-w-[78%]">
                 <p class="eyebrow">Notre devise</p>
                 <p class="mt-3 font-serif text-lg leading-snug text-navy-900 italic">« Nous ne faisons pas autre chose, nous faisons autrement les choses. »</p>
-                <p class="mt-3 text-sm font-semibold text-crimson-600">Solo Deo Gloria</p>
+                <p class="mt-3 text-sm font-semibold text-crimson-600">Soli Deo Gloria</p>
             </div>
         </section>
     </div>

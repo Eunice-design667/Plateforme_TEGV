@@ -37,7 +37,7 @@
                 <img src="/images/logo-rond.png" alt="" class="size-11 rounded-full ring-1 ring-sand">
                 <span class="leading-tight">
                     <span class="block text-lg font-extrabold tracking-tight text-navy-800">TEGV</span>
-                    <span class="block font-serif text-xs text-crimson-600 italic">Solo Deo Gloria</span>
+                    <span class="block font-serif text-xs text-crimson-600 italic">Soli Deo Gloria</span>
                 </span>
             </a>
 

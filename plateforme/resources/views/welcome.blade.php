@@ -4,7 +4,7 @@
         ['calendar', 'Prévenir les responsables', 'Une absence, un décès ou un souci : les pasteurs sont informés.'],
         ['megaphone', 'Suivre la vie de l’église', 'Les informations et les anniversaires du jour.'],
     ];
-    $ticker = ['Le culte commence à 8h00', 'Étude biblique le mardi à 19h', 'Réunion de prière le vendredi à 19h', 'Solo Deo Gloria', 'Ouaga 2000, non loin de Salitas'];
+    $ticker = ['Le culte commence à 8h00', 'Étude biblique le mardi à 19h', 'Réunion de prière le vendredi à 19h', 'Soli Deo Gloria', 'Ouaga 2000, non loin de Salitas'];
 @endphp
 
 <!DOCTYPE html>
@@ -116,7 +116,7 @@
         </div>
 
         <footer class="border-t border-sand py-6 text-center">
-            <p class="font-serif text-lg text-crimson-600 italic">Solo Deo Gloria</p>
+            <p class="font-serif text-lg text-crimson-600 italic">Soli Deo Gloria</p>
             <p class="mt-1 text-xs text-muted">{{ config('tegv.full_name') }} · {{ config('tegv.phone') }}</p>
         </footer>
     </main>

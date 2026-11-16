@@ -6,7 +6,7 @@ return [
     'short_name' => 'TEGV',
     'full_name' => 'Église AD, Temple Évangélique Grâce et Victoire',
     'motto' => 'Nous ne faisons pas autre chose, nous faisons autrement les choses.',
-    'tagline' => 'Solo Deo Gloria',
+    'tagline' => 'Soli Deo Gloria',
     'phone' => '+226 70 26 83 95',
     'address' => 'Ouaga 2000, non loin de Salitas',
     'website' => 'https://tegv-bf.org',
@@ -134,15 +134,11 @@ return [
     ],
 
     /*
-     * Visitor form: maximum submissions per device and per day.
+     * Visitor form: maximum submissions per device and per day (a family may register
+     * several people on one phone).
      */
-    'visitor_daily_limit' => (int) env('TEGV_VISITOR_DAILY_LIMIT', 3),
+    'visitor_daily_limit' => (int) env('TEGV_VISITOR_DAILY_LIMIT', 15),
 
-    /*
-     * Monday agent: hour of the thank-you messages and pause between two sends (seconds).
-     */
-    'thanks_time' => env('TEGV_THANKS_TIME', '10:00'),
-    'thanks_delay_seconds' => (int) env('TEGV_THANKS_DELAY', 8),
     'birthday_time' => env('TEGV_BIRTHDAY_TIME', '06:00'),
 
 ];

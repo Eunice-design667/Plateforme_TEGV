@@ -43,7 +43,7 @@
         </div>
 
         <footer class="flex items-center justify-between bg-gold-400 px-12 py-5 text-navy-900">
-            <span class="font-serif text-xl italic">Solo Deo Gloria</span>
+            <span class="font-serif text-xl italic">Soli Deo Gloria</span>
             <span class="text-sm font-bold">Culte tous les dimanches · 08h – 10h30</span>
         </footer>
     </article>

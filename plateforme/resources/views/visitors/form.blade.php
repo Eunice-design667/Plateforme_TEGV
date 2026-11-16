@@ -1,3 +1,4 @@
+@php($previous ??= null)
 <x-layouts.guest title="Bienvenue">
     <div class="relative -mx-4 -mt-6 overflow-hidden sm:mx-0 sm:mt-0 sm:rounded-(--radius-card)">
         <img src="/images/eglise/culte.jpg" alt="" class="h-80 w-full object-cover">
@@ -9,8 +10,11 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('visitors.store') }}" data-draft="visiteur" class="card relative mt-5 grid grid-cols-1 gap-5 p-5 sm:p-6" x-data="{ noChurch: @js((bool) old('has_no_church')) }">
+    <form method="POST" action="{{ route('visitors.store') }}" data-draft="visiteur" class="card relative mt-5 grid grid-cols-1 gap-5 p-5 sm:p-6" x-data="{ noChurch: @js((bool) old('has_no_church', $previous['has_no_church'] ?? false)) }">
         @csrf
+        @if ($previous)
+            <p class="rounded-2xl bg-gold-50 p-3 text-sm text-navy-900 ring-1 ring-gold-100"><strong>Une autre personne</strong> sur ce même téléphone : l’église et le numéro sont repris, modifiez-les si besoin.</p>
+        @endif
         <div class="hidden" aria-hidden="true"><label>Site web <input name="website" tabindex="-1" autocomplete="off"></label></div>
         <div class="grid grid-cols-2 gap-3">
             <x-field label="Prénom" name="first_name">
@@ -21,17 +25,17 @@
             </x-field>
         </div>
         <x-field label="Église d’origine" name="origin_church">
-            <input id="origin_church" name="origin_church" value="{{ old('origin_church') }}" :disabled="noChurch" :required="!noChurch" class="input disabled:opacity-50" placeholder="Nom de votre église">
+            <input id="origin_church" name="origin_church" value="{{ old('origin_church', $previous['origin_church'] ?? '') }}" :disabled="noChurch" :required="!noChurch" class="input disabled:opacity-50" placeholder="Nom de votre église">
         </x-field>
         <label class="-mt-2 flex items-center gap-3 text-sm font-semibold text-navy-900">
             <input type="checkbox" name="has_no_church" value="1" x-model="noChurch" class="size-5 rounded accent-navy-700"> Je n’ai pas d’église
         </label>
         <x-field label="Numéro WhatsApp" name="whatsapp">
-            <input id="whatsapp" name="whatsapp" type="tel" inputmode="tel" value="{{ old('whatsapp') }}" required class="input" placeholder="+226 70 00 00 00" autocomplete="tel">
+            <input id="whatsapp" name="whatsapp" type="tel" inputmode="tel" value="{{ old('whatsapp', $previous['whatsapp'] ?? '') }}" required class="input" placeholder="+226 70 00 00 00" autocomplete="tel">
         </x-field>
         <label class="flex items-start gap-3 rounded-2xl bg-gold-50 p-4 text-sm text-navy-900 ring-1 ring-gold-100">
             <input type="checkbox" name="consent" value="1" @checked(old('consent')) required class="mt-0.5 size-5 shrink-0 rounded accent-navy-700">
-            <span>J’accepte de recevoir un message de remerciement du TEGV sur WhatsApp. Mes coordonnées ne servent qu’à l’église et peuvent être supprimées sur simple demande.</span>
+            <span>J’accepte que le TEGV enregistre mes coordonnées pour garder le contact avec moi. Elles ne servent qu’à l’église et peuvent être supprimées sur simple demande.</span>
         </label>
         @error('consent')<p class="-mt-3 text-xs font-semibold text-crimson-600">{{ $message }}</p>@enderror
         @error('website')<p class="-mt-3 text-xs font-semibold text-crimson-600">Envoi refusé.</p>@enderror
