@@ -78,7 +78,7 @@ class DemoSeeder extends Seeder
 
         foreach ([
             [$admin, 'banniere.jpg', 'Programme de la semaine : culte, étude biblique et prière.'],
-            [$deacon, 'culte.jpg', 'Retour en images sur la présentation des enfants au culte.'],
+            [$deacon, 'assemblee-10.jpg', 'Retour en images sur le culte de dimanche.'],
         ] as [$author, $file, $caption]) {
             Storage::disk('media')->put("affiches/demo-{$file}", (string) file_get_contents(public_path("images/eglise/{$file}")));
             Poster::factory()->for($author)->create(['image_path' => "affiches/demo-{$file}", 'caption' => $caption]);

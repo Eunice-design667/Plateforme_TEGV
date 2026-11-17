@@ -38,7 +38,7 @@
 
     {{-- Grande carte : prochain rendez-vous --}}
     <section class="relative mt-5 overflow-hidden rounded-(--radius-card) bg-navy-900 text-white shadow-(--shadow-card)">
-        <img src="/images/eglise/culte.jpg" alt="" class="absolute inset-0 size-full object-cover opacity-60">
+        <img src="/images/eglise/assemblee-10.jpg" alt="" class="absolute inset-0 size-full object-cover opacity-60">
         <div class="absolute inset-0 bg-gradient-to-r from-navy-900 via-navy-900/80 to-navy-900/10"></div>
         <div class="relative flex min-h-56 flex-col justify-end p-5 sm:min-h-64 sm:p-8">
             <span class="chip w-fit bg-crimson-500 text-white">
@@ -105,7 +105,7 @@
 
         {{-- Devise --}}
         <section class="relative overflow-hidden rounded-(--radius-card) bg-gold-50 p-5 ring-1 ring-gold-100">
-            <img src="/images/eglise/louange2.jpg" alt="" class="absolute right-0 bottom-0 h-full w-1/3 object-cover opacity-70 [mask-image:linear-gradient(to_left,black,transparent)]">
+            <img src="/images/eglise/assemblee-27.jpg" alt="" class="absolute right-0 bottom-0 h-full w-1/3 object-cover opacity-70 [mask-image:linear-gradient(to_left,black,transparent)]">
             <div class="relative max-w-[78%]">
                 <p class="eyebrow">Notre devise</p>
                 <p class="mt-3 font-serif text-lg leading-snug text-navy-900 italic">« Nous ne faisons pas autre chose, nous faisons autrement les choses. »</p>

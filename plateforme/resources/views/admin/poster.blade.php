@@ -14,7 +14,7 @@
 
     <article class="mx-auto flex h-[297mm] w-[210mm] flex-col overflow-hidden bg-white shadow-xl print:shadow-none">
         <header class="relative h-[78mm] shrink-0 bg-navy-900 text-white">
-            <img src="/images/eglise/culte.jpg" alt="" class="absolute inset-0 size-full object-cover opacity-45">
+            <img src="/images/eglise/assemblee-10.jpg" alt="" class="absolute inset-0 size-full object-cover opacity-45">
             <div class="absolute inset-0 bg-gradient-to-b from-navy-900/40 to-navy-900"></div>
             <div class="relative flex h-full flex-col items-center justify-center px-12 text-center">
                 <img src="/images/logo-rond.png" alt="Logo TEGV" class="size-24 rounded-full ring-4 ring-white/40">

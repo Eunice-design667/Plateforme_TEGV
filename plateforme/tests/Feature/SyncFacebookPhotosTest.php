@@ -21,7 +21,12 @@ class SyncFacebookPhotosTest extends TestCase
         $this->artisan('tegv:photos-facebook')->assertSuccessful();
 
         Http::assertNothingSent();
-        $this->assertContains('/images/eglise/culte.jpg', app(ChurchPhotos::class)->urls());
+        $photos = app(ChurchPhotos::class)->urls();
+        $this->assertCount(9, $photos);
+        $this->assertSame([], array_diff($photos, ChurchPhotos::defaults()));
+        foreach ($photos as $photo) {
+            $this->assertFileExists(public_path($photo));
+        }
     }
 
     public function test_new_page_photos_are_downloaded_once(): void

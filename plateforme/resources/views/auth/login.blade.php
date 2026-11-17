@@ -2,7 +2,7 @@
     <a href="{{ route('welcome') }}" class="inline-flex size-10 items-center justify-center rounded-full bg-white ring-1 ring-sand" aria-label="Retour"><x-icon name="arrow-left" class="size-4" /></a>
 
     <div class="relative mt-6 overflow-hidden rounded-3xl">
-        <img src="/images/eglise/culte.jpg" alt="" class="h-40 w-full object-cover">
+        <img src="/images/eglise/assemblee-10.jpg" alt="" class="h-40 w-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-navy-900/85 via-navy-900/30 to-transparent"></div>
         <div class="absolute bottom-4 left-4 flex items-center gap-3 text-white">
             <img src="/images/logo-rond.png" alt="" class="size-11 rounded-full ring-2 ring-white/60">

@@ -12,21 +12,10 @@ use Illuminate\Support\Facades\Cache;
 class ChurchPhotos
 {
     /**
-     * Photos shipped with the platform, used until enough Facebook photos are synced.
-     *
-     * @var list<string>
+     * Photos shipped with the platform (chosen from the church's Facebook page),
+     * used until enough Facebook photos are synced.
      */
-    private const DEFAULTS = [
-        '/images/eglise/louange1.jpg',
-        '/images/eglise/louange8.jpg',
-        '/images/eglise/culte.jpg',
-        '/images/eglise/louange9.jpg',
-        '/images/eglise/louange4.jpg',
-        '/images/eglise/louange5.jpg',
-        '/images/eglise/louange7.jpg',
-        '/images/eglise/louange3.jpg',
-        '/images/eglise/louange6.jpg',
-    ];
+    private const DEFAULT_COUNT = 36;
 
     /**
      * @return list<string>
@@ -41,9 +30,23 @@ class ChurchPhotos
             ->all());
 
         return collect($synced)
-            ->merge(self::DEFAULTS)
+            ->merge(self::defaults())
             ->unique()
             ->take($count)
+            ->values()
+            ->all();
+    }
+
+    /**
+     * The shipped photos in a different order each day, so that all of them are shown in turn.
+     *
+     * @return list<string>
+     */
+    public static function defaults(): array
+    {
+        return collect(range(1, self::DEFAULT_COUNT))
+            ->map(fn (int $number) => sprintf('/images/eglise/assemblee-%02d.jpg', $number))
+            ->shuffle(crc32(today()->toDateString()))
             ->values()
             ->all();
     }

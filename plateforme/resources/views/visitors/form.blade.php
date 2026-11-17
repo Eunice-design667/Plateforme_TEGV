@@ -1,7 +1,7 @@
 @php($previous ??= null)
 <x-layouts.guest title="Bienvenue">
     <div class="relative -mx-4 -mt-6 overflow-hidden sm:mx-0 sm:mt-0 sm:rounded-(--radius-card)">
-        <img src="/images/eglise/culte.jpg" alt="" class="h-80 w-full object-cover">
+        <img src="/images/eglise/assemblee-10.jpg" alt="" class="h-80 w-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/75 to-navy-900/10"></div>
         <div class="absolute inset-x-0 bottom-0 p-5 text-white">
             <img src="/images/logo-rond.png" alt="Logo TEGV" class="size-14 rounded-full ring-4 ring-white/30">
